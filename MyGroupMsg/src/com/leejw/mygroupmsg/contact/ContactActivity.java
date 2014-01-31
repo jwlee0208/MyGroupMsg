@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 
 import com.leejw.mygroupmsg.R;
 
@@ -21,9 +22,10 @@ public class ContactActivity extends Activity{
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.av_contact);
 		
 		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.contact_linear);
+		ScrollView scrollView = (ScrollView) findViewById(R.id.contact_scroll);
+		
 		
 		List<Contact> contactList = this.getContactList();
 		
@@ -62,9 +64,11 @@ public class ContactActivity extends Activity{
 				linearLayout.addView(checkBox);
 				
 			}
+			scrollView.addView(linearLayout);
 		}else{
 			
 		}
+		setContentView(R.layout.av_contact);
 	}
 	
 	private List<Contact> getContactList() {
