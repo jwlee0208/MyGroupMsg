@@ -2,9 +2,14 @@ package com.leejw.mygroupmsg.contact;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,19 +21,27 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
+import com.leejw.mygroupmsg.main.MainActivity;
 
 public class ContactActivity extends Activity{
 	
-	private ListView listView;
+	ArrayList<Contact> returnList;
 	
+//	public ContactActivity() {
+//		super();
+		// TODO Auto-generated constructor stub
+//		this.returnList = new ArrayList<Contact>();
+//	}
+
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.av_contact);
+		
+		this.returnList = new ArrayList<Contact>();
 		
 		final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.contact_linear);
 		
@@ -75,21 +88,18 @@ public class ContactActivity extends Activity{
 			for(Contact contact : contactList){
 	             
 				String receiverId = contact.getReceiverName() + ";" + contact.getReceiverPhoneNo();
-				String receiverText = contact.getReceiverName() + "[" + contact.getReceiverPhoneNo() + "]";
+//				String receiverText = contact.getReceiverName() + "[" + contact.getReceiverPhoneNo() + "]";
 				
-				CheckBox checkBox = new CheckBox(this);
+				final CheckBox checkBox = new CheckBox(this);
 				checkBox.setText(receiverId.toString());
 				checkBox.setId(index);
 				
+			
 				checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						// TODO Auto-generated method stub
-						if(buttonView.isChecked()){
-							System.out.println(buttonView.getText());							
-						}else{
-							
-						}
+						
+						updateData(buttonView.getText().toString(), checkBox.isChecked());
 					}
 				});
 
@@ -106,7 +116,13 @@ public class ContactActivity extends Activity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				finish();
+				// ref.] 
+				// 1. http://blog.naver.com/PostView.nhn?blogId=0677haha&logNo=60141449535
+				// 2. http://rlqks132.tistory.com/44
+				Intent intent = new Intent(getBaseContext(), MainActivity.class);
+				intent.putExtra("contactList", returnList);
+				setResult(2, intent);
+				finish();					
 			}
 		});
 		// 취소 버튼 클릭시
@@ -119,6 +135,59 @@ public class ContactActivity extends Activity{
 			}
 		});
 		
+	}
+	/**
+	 * 반환할 리스트 객체에 데이터 추가/제거
+	 * @param receiverInfo
+	 * @param isChecked
+	 */
+	private void updateData(String receiverInfo, boolean isChecked){
+		String receiverInfos[]  = this.splitStr(receiverInfo.toString());
+		Contact contactObj;
+		
+		String receiverName = receiverInfos[0];
+		String cellPhonoNo = receiverInfos[1];
+		
+		int returnListSize = this.returnList.size();
+		
+		if(receiverInfos.length > 0){
+			if(isChecked){
+				contactObj = new Contact();
+				
+				contactObj.setReceiverName(receiverInfos[0]);
+				contactObj.setReceiverPhoneNo(receiverInfos[1]);
+				// 행 추가
+				returnList.add(contactObj);
+				
+			}else{
+				// 체크박스 체크해제시 오류 해결 요망
+				if(returnListSize > 0){
+					
+					// 비교
+//					if(returnList.contains(receiverInfos[1])){
+						contactObj = new Contact();
+						contactObj.setReceiverName(receiverName);
+						contactObj.setReceiverPhoneNo(cellPhonoNo);
+						
+						for(int i = 0 ; i < returnListSize ; i++){
+							Contact contact = (Contact)returnList.get(i);
+//							System.out.println(contact.getReceiverName().equals(receiverName) + " , " + contact.getReceiverPhoneNo().equals(cellPhonoNo));
+							
+							if(contact.getReceiverName().equals(receiverName) && contact.getReceiverPhoneNo().equals(cellPhonoNo)){
+								returnList.remove(contact);
+							}
+						}
+				}else{
+					// pass
+				}
+			}			
+		}
+		printList();
+	}
+	
+	public String[] splitStr(String value){
+		Pattern p = Pattern.compile("[;]+");
+		return p.split(value);
 	}
 	
 	private List<Contact> getContactList() {
@@ -165,5 +234,17 @@ public class ContactActivity extends Activity{
                 } while (contactCursor.moveToNext());
         }
         return contactList;
+	}
+	
+	private void printList(){
+		int listSize = returnList.size();
+		
+		if(listSize > 0){
+			System.out.println("-------------------------");
+			for(Contact contact : returnList){
+				System.out.println(contact.getReceiverName() + ", " + contact.getReceiverPhoneNo());
+			}				
+			System.out.println("-------------------------");
+		}	
 	}	
 }

@@ -1,6 +1,9 @@
 package com.leejw.mygroupmsg.contact;
 
-public class Contact {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Contact implements Serializable{
 	private String receiverId;
 	private String receiverName;
 	private String receiverPhoneNo;
