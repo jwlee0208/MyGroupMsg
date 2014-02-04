@@ -19,6 +19,8 @@ public class MainActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.av_main);
 
+		
+		
 		EditText textView = (EditText)findViewById(R.id.editText1);
 		
 		Button button00 = (Button)findViewById(R.id.button0);

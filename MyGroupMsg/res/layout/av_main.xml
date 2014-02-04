@@ -1,9 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center" >
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="메시지에 ##을 입력하시면 선택한 수신자 명으로 치환됩니다."
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -14,39 +21,37 @@
         <EditText
             android:id="@+id/editText1"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            >
+            android:layout_height="348dp"
+            android:ems="10" >
+
             <requestFocus />
         </EditText>
     </LinearLayout>
 
-    <LinearLayout 
-	    android:orientation="horizontal"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:gravity="center" >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="초기화" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="187dp"
+            android:layout_height="fill_parent"
+            android:text="수신자선택" />
 
         <Button
             android:id="@+id/button0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:text="전송" />
 
-	    <Button
-	        android:id="@+id/button1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginTop="16dp"
-	        android:text="초기화" />
-	
-	    <Button
-	        android:id="@+id/button2"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignBaseline="@+id/button1"
-	        android:layout_alignBottom="@+id/button1"
-	        android:layout_toRightOf="@+id/button1"
-	        android:text="수신자선택" />
-	</LinearLayout>    
-</LinearLayout>    
+    </LinearLayout>
+
+</LinearLayout>

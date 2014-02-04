@@ -3,72 +3,122 @@ package com.leejw.mygroupmsg.contact;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
 
 public class ContactActivity extends Activity{
 	
 	private ListView listView;
-
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.av_contact);
 		
-		LinearLayout linearLayout = (LinearLayout) findViewById(R.id.contact_linear);
-		ScrollView scrollView = (ScrollView) findViewById(R.id.contact_scroll);
+		final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.contact_linear);
 		
-		
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		// 상단 문구 설정
+		TextView headText = new TextView(this);
+		headText.setText("수신자를 선택해 주세요.");
+		linearLayout.addView(headText);
+
+
+		// 하단의 버튼 추가
+		LinearLayout llbottom = new LinearLayout(this);
+        llbottom.setOrientation(LinearLayout.HORIZONTAL);
+        Button okBtn = new Button(this);
+        okBtn.setText("확인");
+        
+        Button cancelBtn = new Button(this);
+        cancelBtn.setText("취소");
+
+        llbottom.addView(okBtn);
+        llbottom.addView(cancelBtn);
+        linearLayout.addView(llbottom);
+      
+		// 수신자 선택 목록 스크롤 생성
+		ScrollView scrollView = new ScrollView(this);
+
+		scrollView.setLayoutParams(params);
+		// 수신자 선택 목록 리니어레이아웃 생성
+		LinearLayout ll = new LinearLayout(this);
+        ll.setOrientation(LinearLayout.VERTICAL);
+        
+		scrollView.addView(ll);
+		linearLayout.addView(scrollView);
+
 		List<Contact> contactList = this.getContactList();
 		
 		int contactListSize = contactList.size();
 		
-		if(contactListSize > 0){
-//			adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-//			
-//			listView = (ListView)findViewById(R.id.listView);
-//			listView.setAdapter(adapter);
-//			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		if(contactListSize > 0){			
+			int index = 0;
+			// Create LinearLayout
 
-//			listView.setOnItemClickListener(new OnItemClickListener() {
-//
-//				@Override
-//				public void onItemClick(AdapterView<?> parent, View view,
-//						int position, long id) {
-//					// TODO Auto-generated method stub
-//					String str = (String)adapter.getItem(position);
-//					
-//					Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
-//				}
-//				
-//			});
 			for(Contact contact : contactList){
-				
+	             
 				String receiverId = contact.getReceiverName() + ";" + contact.getReceiverPhoneNo();
 				String receiverText = contact.getReceiverName() + "[" + contact.getReceiverPhoneNo() + "]";
 				
-//				System.out.println("receiverId ; " + receiverId);
-				
 				CheckBox checkBox = new CheckBox(this);
 				checkBox.setText(receiverId.toString());
+				checkBox.setId(index);
 				
-//				checkBox.setId(receiverId);
-				linearLayout.addView(checkBox);
+				checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						// TODO Auto-generated method stub
+						if(buttonView.isChecked()){
+							System.out.println(buttonView.getText());							
+						}else{
+							
+						}
+					}
+				});
+
+				ll.addView(checkBox);
 				
+				index++;
 			}
-			scrollView.addView(linearLayout);
 		}else{
 			
 		}
-		setContentView(R.layout.av_contact);
+		// 확인 버튼 클릭시
+		okBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				finish();
+			}
+		});
+		// 취소 버튼 클릭시
+		cancelBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				finish();
+			}
+		});
+		
 	}
 	
 	private List<Contact> getContactList() {
