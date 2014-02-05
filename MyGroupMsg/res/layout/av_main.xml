@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="메시지에 ##을 입력하시면 선택한 수신자 명으로 치환됩니다."
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="25px" />
 
     <LinearLayout
         android:layout_width="fill_parent"

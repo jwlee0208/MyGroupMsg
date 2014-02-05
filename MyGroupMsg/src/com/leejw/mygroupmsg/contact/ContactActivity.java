@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.main.MainActivity;
+import com.leejw.utils.StringUtil;
 
 public class ContactActivity extends Activity{
 	
@@ -135,6 +137,8 @@ public class ContactActivity extends Activity{
 			}
 		});
 		
+
+
 	}
 	/**
 	 * 반환할 리스트 객체에 데이터 추가/제거
