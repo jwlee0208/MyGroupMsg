@@ -1,5 +1,7 @@
 package com.leejw.utils;
 
+import java.util.regex.Pattern;
+
 public class StringUtil {
 	/**
 	 * null 체크
@@ -21,5 +23,10 @@ public class StringUtil {
 	 */
 	public static boolean isNotNull(String str){
 		return (!isNull(str));
+	}
+	
+	public static String[] splitStr(String value){
+		Pattern p = Pattern.compile("[;]+");
+		return p.split(value);
 	}
 }

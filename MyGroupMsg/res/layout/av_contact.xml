@@ -13,25 +13,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/searchReceiverBtn"
-            android:text="검색" />
+<!--         <Button -->
+<!--             android:id="@+id/button1" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_alignParentRight="true" -->
+<!--             android:layout_alignParentTop="true" -->
+<!--             android:layout_toRightOf="@+id/searchReceiverBtn" -->
+<!--             android:text="검색" /> -->
 
-        <EditText
-            android:id="@+id/searchReceiverTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:ems="10" >
+<!--         <EditText -->
+<!--             android:id="@+id/searchReceiverTxt" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_alignParentLeft="true" -->
+<!--             android:layout_alignParentTop="true" -->
+<!--             android:ems="10" > -->
 
-            <requestFocus />
-        </EditText>
+<!--             <requestFocus /> -->
+<!--         </EditText> -->
 
     </RelativeLayout>
 

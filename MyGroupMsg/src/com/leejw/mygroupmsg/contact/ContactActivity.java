@@ -2,11 +2,8 @@ package com.leejw.mygroupmsg.contact;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Intent;
@@ -19,7 +16,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -29,16 +25,11 @@ import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.main.MainActivity;
 import com.leejw.utils.StringUtil;
 
+@SuppressLint("NewApi")
 public class ContactActivity extends Activity{
 	
 	ArrayList<Contact> returnList;
 	
-//	public ContactActivity() {
-//		super();
-		// TODO Auto-generated constructor stub
-//		this.returnList = new ArrayList<Contact>();
-//	}
-
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.av_contact);
@@ -49,6 +40,7 @@ public class ContactActivity extends Activity{
 		
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		
 		// 상단 문구 설정
 		TextView headText = new TextView(this);
 		headText.setText("수신자를 선택해 주세요.");
@@ -59,6 +51,7 @@ public class ContactActivity extends Activity{
 		LinearLayout llbottom = new LinearLayout(this);
         llbottom.setOrientation(LinearLayout.HORIZONTAL);
         Button okBtn = new Button(this);
+        
         okBtn.setText("확인");
         
         Button cancelBtn = new Button(this);
@@ -71,7 +64,8 @@ public class ContactActivity extends Activity{
 		// 수신자 선택 목록 스크롤 생성
 		ScrollView scrollView = new ScrollView(this);
 
-		scrollView.setLayoutParams(params);
+		LayoutParams scrollViewParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		scrollView.setLayoutParams(scrollViewParams);
 		// 수신자 선택 목록 리니어레이아웃 생성
 		LinearLayout ll = new LinearLayout(this);
         ll.setOrientation(LinearLayout.VERTICAL);
@@ -146,41 +140,41 @@ public class ContactActivity extends Activity{
 	 * @param isChecked
 	 */
 	private void updateData(String receiverInfo, boolean isChecked){
-		String receiverInfos[]  = this.splitStr(receiverInfo.toString());
+		String receiverInfos[]  = StringUtil.splitStr(receiverInfo.toString());
 		Contact contactObj;
 		
 		String receiverName = receiverInfos[0];
-		String cellPhonoNo = receiverInfos[1];
+		String cellPhoneNo = receiverInfos[1];
 		
 		int returnListSize = this.returnList.size();
 		
 		if(receiverInfos.length > 0){
+			
+
 			if(isChecked){
-				contactObj = new Contact();
+				System.out.println("IS_CHECKED");
+				contactObj = this.setContact(receiverName, cellPhoneNo);
 				
-				contactObj.setReceiverName(receiverInfos[0]);
-				contactObj.setReceiverPhoneNo(receiverInfos[1]);
 				// 행 추가
 				returnList.add(contactObj);
 				
 			}else{
 				// 체크박스 체크해제시 오류 해결 요망
 				if(returnListSize > 0){
+					System.out.println("IS_UNCHECKED");
+					// 왜 삭제가 안될까???
+					// ref.] http://stackoverflow.com/questions/16460258/java-lang-indexoutofboundsexception-invalid-index-2-size-is-2
+//					returnList.remove(contactObj);
 					
-					// 비교
-//					if(returnList.contains(receiverInfos[1])){
-						contactObj = new Contact();
-						contactObj.setReceiverName(receiverName);
-						contactObj.setReceiverPhoneNo(cellPhonoNo);
-						
-						for(int i = 0 ; i < returnListSize ; i++){
-							Contact contact = (Contact)returnList.get(i);
-//							System.out.println(contact.getReceiverName().equals(receiverName) + " , " + contact.getReceiverPhoneNo().equals(cellPhonoNo));
+					for(int i = 0 ; i < returnListSize ; i++){
+						Contact contact = (Contact)returnList.get(i);
 							
-							if(contact.getReceiverName().equals(receiverName) && contact.getReceiverPhoneNo().equals(cellPhonoNo)){
-								returnList.remove(contact);
-							}
+						if(contact.getReceiverName().equals(receiverName) 
+						&& contact.getReceiverPhoneNo().equals(cellPhoneNo)){
+							returnList.remove(contact);  	// java.lang.IndexOutOfBoundsException: Invalid index 2, size is 2
+							returnListSize--;
 						}
+					}
 				}else{
 					// pass
 				}
@@ -189,9 +183,19 @@ public class ContactActivity extends Activity{
 		printList();
 	}
 	
-	public String[] splitStr(String value){
-		Pattern p = Pattern.compile("[;]+");
-		return p.split(value);
+	/**
+	 * 연락처 객체에 정보 setting.
+	 * @param receiverName
+	 * @param receiverPhoneNo
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private Contact setContact(String receiverName, String receiverPhoneNo){
+		Contact contactObj = new Contact();
+		contactObj.setReceiverName(receiverName);
+		contactObj.setReceiverPhoneNo(receiverPhoneNo);
+		
+		return contactObj;
 	}
 	
 	private List<Contact> getContactList() {
