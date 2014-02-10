@@ -7,6 +7,8 @@ public class Contact implements Serializable{
 	private String receiverId;
 	private String receiverName;
 	private String receiverPhoneNo;
+	private String groupId;
+	
 	public String getReceiverId() {
 		return receiverId;
 	}
@@ -25,6 +27,11 @@ public class Contact implements Serializable{
 	public void setReceiverPhoneNo(String receiverPhoneNo) {
 		this.receiverPhoneNo = receiverPhoneNo;
 	}
-	
+	public String getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
 	
 }

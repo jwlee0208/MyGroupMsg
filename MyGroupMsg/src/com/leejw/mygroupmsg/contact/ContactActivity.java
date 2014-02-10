@@ -1,6 +1,11 @@
 package com.leejw.mygroupmsg.contact;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -10,6 +15,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Contacts.Groups;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -73,63 +79,101 @@ public class ContactActivity extends Activity{
 		scrollView.addView(ll);
 		linearLayout.addView(scrollView);
 
-		List<Contact> contactList = this.getContactList();
+//		List<Contact> contactList = this.getContactList();
+		// 중복 데이터 제거
+//		contactList = new ArrayList<Contact>(new HashSet<Contact>(contactList));
 		
-		int contactListSize = contactList.size();
+		List<Group> groupList = this.getGroupList(null);
 		
-		if(contactListSize > 0){			
-			int index = 0;
-			// Create LinearLayout
-
-			for(Contact contact : contactList){
-	             
-				String receiverId = contact.getReceiverName() + ";" + contact.getReceiverPhoneNo();
-//				String receiverText = contact.getReceiverName() + "[" + contact.getReceiverPhoneNo() + "]";
-				
-				final CheckBox checkBox = new CheckBox(this);
-				checkBox.setText(receiverId.toString());
-				checkBox.setId(index);
-				
+		this.printList(groupList);
+		
+		
+		int groupListSize = groupList.size();
+		
+		
+		if(groupListSize > 0){
+			int groupIndex = 0;
 			
-				checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			for(Group group : groupList){
+				
+				String groupId = group.getGroupId();
+				
+				TextView groupRow = new TextView(this);
+				groupRow.setText(group.getGroupTitle());
+				groupRow.setId(Integer.parseInt(groupId));
+				
+				ll.addView(groupRow);
+				
+				List<Contact> contactList = this.getContactList(null, groupId);
+				
+				this.printList(contactList);
+				
+				// ------------ [ contactList 조회 ] --------------
+				int contactListSize = contactList.size();
+				
+				if(contactListSize > 0){			
+					int index = 0;
+					// Create LinearLayout
+
+					for(Contact contact : contactList){
+			             
+						String receiverId = contact.getReceiverName() + ";" + contact.getReceiverPhoneNo() + ";" + contact.getGroupId();
 						
-						updateData(buttonView.getText().toString(), checkBox.isChecked());
+						final CheckBox checkBox = new CheckBox(this);
+						checkBox.setText(receiverId.toString());
+						checkBox.setId(index);
+						
+					
+						checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+							@Override
+							public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+								
+								updateData(buttonView.getText().toString(), checkBox.isChecked());
+							}
+						});
+						
+						ll.addView(checkBox);
+						
+						index++;
+					}
+				}else{
+					
+				}
+				// 확인 버튼 클릭시
+				okBtn.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						// ref.] 
+						// 1. http://blog.naver.com/PostView.nhn?blogId=0677haha&logNo=60141449535
+						// 2. http://rlqks132.tistory.com/44
+						Intent intent = new Intent(getBaseContext(), MainActivity.class);
+						intent.putExtra("contactList", returnList);
+						setResult(2, intent);
+						finish();					
 					}
 				});
-
-				ll.addView(checkBox);
+				// 취소 버튼 클릭시
+				cancelBtn.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						finish();
+					}
+				});	
+				// ------------ [ contactList 조회 ] --------------
 				
-				index++;
+				groupIndex++;
 			}
 		}else{
-			
+			// pass
 		}
-		// 확인 버튼 클릭시
-		okBtn.setOnClickListener(new OnClickListener() {
 			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				// ref.] 
-				// 1. http://blog.naver.com/PostView.nhn?blogId=0677haha&logNo=60141449535
-				// 2. http://rlqks132.tistory.com/44
-				Intent intent = new Intent(getBaseContext(), MainActivity.class);
-				intent.putExtra("contactList", returnList);
-				setResult(2, intent);
-				finish();					
-			}
-		});
-		// 취소 버튼 클릭시
-		cancelBtn.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				finish();
-			}
-		});
+
+		
+
 		
 
 
@@ -145,15 +189,14 @@ public class ContactActivity extends Activity{
 		
 		String receiverName = receiverInfos[0];
 		String cellPhoneNo = receiverInfos[1];
+		String groupId = receiverInfos[2];
 		
 		int returnListSize = this.returnList.size();
 		
 		if(receiverInfos.length > 0){
-			
-
 			if(isChecked){
 				System.out.println("IS_CHECKED");
-				contactObj = this.setContact(receiverName, cellPhoneNo);
+				contactObj = this.setContact(receiverName, cellPhoneNo, groupId);
 				
 				// 행 추가
 				returnList.add(contactObj);
@@ -190,26 +233,97 @@ public class ContactActivity extends Activity{
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private Contact setContact(String receiverName, String receiverPhoneNo){
+	private Contact setContact(String receiverName, String receiverPhoneNo, String groupId){
 		Contact contactObj = new Contact();
 		contactObj.setReceiverName(receiverName);
 		contactObj.setReceiverPhoneNo(receiverPhoneNo);
+		contactObj.setGroupId(groupId);
 		
 		return contactObj;
 	}
+	/**
+	 * 주소록 그룹 정보 목록 조회
+	 * @param searchKeyword
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private List<Group> getGroupList(String searchKeyword){
+		Uri uri = ContactsContract.Groups.CONTENT_URI;
+//		String[] projections = new String[] {
+//				ContactsContract.Groups._ID,
+//				ContactsContract.Groups._COUNT,
+//				ContactsContract.Groups.TITLE,
+//				ContactsContract.Groups.ACCOUNT_NAME,
+//				ContactsContract.Groups.ACCOUNT_TYPE,
+//				ContactsContract.Groups.DELETED,
+//				ContactsContract.Groups.GROUP_VISIBLE
+//		};
+		String[] projections = new String[] {
+				ContactsContract.Groups._ID,
+				ContactsContract.Groups.TITLE
+		};
+
+		
+        String selection = (StringUtil.isNotNull(searchKeyword)) ? ContactsContract.Groups.TITLE + " LIKE '%" + searchKeyword + "%'" : null;
+        		
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Groups.TITLE + " COLLATE LOCALIZED ASC";
+
+        Cursor groupCursor = 
+        		getContentResolver().query(uri, projections,
+                        selection, selectionArgs, sortOrder);
+        
+		List<Group> groupList = new ArrayList<Group>();
+		Group groupObj = null;
+		
+		if(groupCursor.moveToFirst()){
+			do{
+				groupObj = new Group();
+//				groupObj.setGroupId(groupCursor.getString(0));
+//				groupObj.setGroupCount(groupCursor.getString(1));
+//				groupObj.setGroupTitle(groupCursor.getString(2));
+//				groupObj.setGroupAccountNm(groupCursor.getString(3));
+//				groupObj.setGroupAccountTp(groupCursor.getString(4));
+//				groupObj.setGroupDelete(groupCursor.getString(5));
+//				groupObj.setGroupVisible(groupCursor.getString(6));
+
+				groupObj.setGroupId(groupCursor.getString(0));
+				groupObj.setGroupTitle(groupCursor.getString(1));
+				
+				groupList.add(groupObj);
+			}while(groupCursor.moveToNext());
+		}
+        
+        
+		return groupList;
+	}
 	
 	private List<Contact> getContactList() {
+		return getContactList(null, null);
+	}
+	
+	private List<Contact> getContactList(String searchKeyword, String groupId){
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String[] projections = new String[] {
                         ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                         ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME };
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID};
+        // where 절 조건 정의
+        // ref.] 
+        //       1. http://withwani.tistory.com/153 
+        //       2. http://www.tutorialspoint.com/sqlite/sqlite_like_clause.htm
+        String selection = "";
+        selection += (StringUtil.isNotNull(groupId)) ? ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = " + groupId : "" ;
+        selection += (StringUtil.isNotNull(searchKeyword)) ? ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%' " : "";
+        
+        
         String[] selectionArgs = null;
         String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
                         + " COLLATE LOCALIZED ASC";
 
         Cursor contactCursor = getContentResolver().query(uri, projections,
-                        null, selectionArgs, sortOrder);
+                        selection, selectionArgs, sortOrder);
         List<Contact> contactList = new ArrayList<Contact>();
         Contact contactInfo = null;
         if (contactCursor.moveToFirst()) {
@@ -231,11 +345,12 @@ public class ContactActivity extends Activity{
                                                 + phonenumber.substring(3, 7) + "-"
                                                 + phonenumber.substring(7);
                         }
-                        // contactInfo.setPhotoId(contactCursor.getLong(0));
+//                         contactInfo.setPhotoId(contactCursor.getLong(0));
                         
                         if(headPhoneNo.equals("010") || headPhoneNo.equals("011") || headPhoneNo.indexOf("82") > 0){
                                 contactInfo.setReceiverPhoneNo(phonenumber);
                                 contactInfo.setReceiverName(contactCursor.getString(2));
+                                contactInfo.setGroupId(contactCursor.getString(3));
                                 contactList.add(contactInfo);                                        
                         }
                         
@@ -250,9 +365,44 @@ public class ContactActivity extends Activity{
 		if(listSize > 0){
 			System.out.println("-------------------------");
 			for(Contact contact : returnList){
-				System.out.println(contact.getReceiverName() + ", " + contact.getReceiverPhoneNo());
+				System.out.println(contact.getReceiverName() + ", " + contact.getReceiverPhoneNo() + ", " + contact.getGroupId());
 			}				
 			System.out.println("-------------------------");
 		}	
 	}	
+	
+	// ref.] http://stackoverflow.com/questions/13400075/reflection-generic-get-field-value
+	private void printList(List<?> list){
+		
+		int listSize = list.size();
+		
+		if(listSize > 0){
+			System.out.println("-------------------------");
+			for(Object obj : list){
+				Class classVal = obj.getClass();
+				
+				Method[] methods = classVal.getMethods();
+				
+				for(Field targetField : classVal.getDeclaredFields()){
+					targetField.setAccessible(true);
+					
+					try {
+						System.out.println(targetField.getName() + ", " + targetField.get(obj));
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			}				
+			System.out.println("-------------------------");
+
+		}
+	}
+	
+
+	
 }

@@ -1,5 +1,7 @@
 package com.leejw.utils;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class StringUtil {
@@ -29,4 +31,5 @@ public class StringUtil {
 		Pattern p = Pattern.compile("[;]+");
 		return p.split(value);
 	}
+	
 }
