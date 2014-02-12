@@ -10,6 +10,7 @@ public class Group implements Serializable{
 	private String groupAccountTp;
 	private String groupDelete;
 	private String groupVisible;
+	private int contactId;
 	
 	public String getGroupId() {
 		return groupId;
@@ -52,6 +53,12 @@ public class Group implements Serializable{
 	}
 	public void setGroupVisible(String groupVisible) {
 		this.groupVisible = groupVisible;
+	}
+	public int getContactId() {
+		return contactId;
+	}
+	public void setContactId(int contactId) {
+		this.contactId = contactId;
 	}
 
 }
