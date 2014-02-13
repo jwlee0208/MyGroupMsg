@@ -31,5 +31,18 @@ public class StringUtil {
 		Pattern p = Pattern.compile("[;]+");
 		return p.split(value);
 	}
-	
+	/**
+	 * not null 체크 for list
+	 * @param list
+	 * @return
+	 */
+	public static boolean isNotNull(List<?> list){
+		boolean isNotNull = false;
+		if(list != null){
+			int listSize = list.size();
+			if(listSize > 0)
+				isNotNull = true;
+		}
+		return isNotNull;
+	}
 }

@@ -27,7 +27,8 @@
         </activity>
       	<activity android:name=".contact.ContactActivity">
         </activity>        
-      	
+        <activity android:name="com.leejw.mygroupmsg.group.GroupListActivity">
+      	</activity>
     </application>
 
 </manifest>

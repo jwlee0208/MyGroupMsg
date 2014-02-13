@@ -2,8 +2,6 @@ package com.leejw.mygroupmsg.contact;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,12 +13,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Contacts;
-import android.provider.Contacts.GroupMembership;
-import android.provider.Contacts.Groups;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -32,6 +30,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
+import com.leejw.mygroupmsg.group.Group;
 import com.leejw.mygroupmsg.main.MainActivity;
 import com.leejw.utils.StringUtil;
 
@@ -97,7 +96,7 @@ public class ContactActivity extends Activity{
 			
 			for(Group group : groupList){
 				
-				if(groupIndex < 5){// 임시 조건
+//				if(groupIndex < 5){// 임시 조건
 				
 				String groupId = group.getGroupId();
 				
@@ -107,7 +106,7 @@ public class ContactActivity extends Activity{
 				
 				ll.addView(groupRow);
 				
-				List<Contact> contactList = this.getContactList(null, groupId, group.getContactId());
+				List<Contact> contactList = this.getContactList(null, groupId);
 				
 				// 중복 데이터 제거
 				contactList = new ArrayList<Contact>(new HashSet<Contact>(contactList));
@@ -170,7 +169,7 @@ public class ContactActivity extends Activity{
 				});	
 				// ------------ [ contactList 조회 ] --------------
 				
-				}//임시조건 끝
+//				}//임시조건 끝
 				
 				groupIndex++;
 			}
@@ -178,6 +177,10 @@ public class ContactActivity extends Activity{
 		}else{
 			// pass
 		}
+        
+        
+	
+
 	}
 	/**
 	 * 반환할 리스트 객체에 데이터 추가/제거
@@ -310,7 +313,7 @@ public class ContactActivity extends Activity{
 	 */
 	@SuppressWarnings("unused")
 	private List<Contact> getContactList() {
-		return getContactList(null, null, -1);
+		return getContactList(null, null);
 	}
 	/**
 	 * 주소록 조회
@@ -318,89 +321,138 @@ public class ContactActivity extends Activity{
 	 * @param groupId
 	 * @return
 	 */
-	private List<Contact> getContactList(String searchKeyword, String groupId, int contactId){
+	private List<Contact> getContactList(String searchKeyword, String groupId){
+		List<Contact> contactList = new ArrayList<Contact>();
+		Contact contactInfo = null;
 		
-        Uri uri = 
-//        		ContactsContract.Data.CONTENT_URI;
-        		ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        String[] projections = //null;
-        		new String[] {
-//        		ContactsContract.Data.CONTACT_ID,
-        		ContactsContract.CommonDataKinds.Phone.NUMBER,
-        		ContactsContract.Data.DISPLAY_NAME
-        		};
-//        		new String[] {
-//                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
-//                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-//                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-//                        ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID};
-        // where 절 조건 정의
-        // ref.] 
-        //       1. http://withwani.tistory.com/153 
-        //       2. http://www.tutorialspoint.com/sqlite/sqlite_like_clause.htm
-        //       3. http://chunic.blogspot.kr/2013/10/blog-post.html
-        String selection = "";
-        selection += (contactId > -1) ? Phone.CONTACT_ID + " = " + contactId : "";
-//        selection += (StringUtil.isNotNull(groupId)) 
-//        				?  ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = " + Long.parseLong(groupId) + " AND "
-//        				 + ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE 	 + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE +"'"
-//            			 + ContactsContract.Data.MIMETYPE 	 + " = '" + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE +"'"
-//        				 : "" ;
-        selection += (StringUtil.isNotNull(groupId) && StringUtil.isNotNull(searchKeyword)) ? " AND " : "";
-        selection += (StringUtil.isNotNull(searchKeyword)) ? ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%' " : "";
-        
-        
-        String[] selectionArgs = null;
-        String sortOrder = 
-        		ContactsContract.Data.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+		Uri uri = Data.CONTENT_URI;
 
-        Cursor contactCursor = getContentResolver().query(uri, projections,
-                        selection, selectionArgs, sortOrder);
-        List<Contact> contactList = new ArrayList<Contact>();
-        Contact contactInfo = null;
-        int contactCursorCnt = contactCursor.getCount();
+		String[] projections = new String[] {
+				Contacts.DISPLAY_NAME
+			  , android.provider.ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID
+		};
+		
+        String selection = ""; 
+        selection += CommonDataKinds.GroupMembership.GROUP_ROW_ID + " =  ? " + " AND ";
+        selection += ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE + "'" ;
+        selection += (StringUtil.isNotNull(searchKeyword)) ? " AND " + Contacts.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%'" : "";
+        String[] selectionArgs = {String.valueOf(groupId)};
+        String sortOrder = 
+        		Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+
+        Cursor groupCursor = 
+        		getContentResolver().query(uri, projections,selection, selectionArgs, sortOrder);
         
-        if(contactCursorCnt > 0){        	
-        
-	        if (contactCursor.moveToFirst()) {
-	
-	                do {
-	                	
-//	                	for(int i = 0 ; i < contactCursor.getColumnCount() ; i++){
-//	                		System.out.println(i + " : " + contactCursor.getColumnName(i) + ", " + contactCursor.getString(i) + ", " + contactCursor.getString(contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-//	                	}
-	                	
-	                        contactInfo = new Contact();
-	                        contactInfo.setReceiverPhoneNo(contactCursor.getString(0));
-	                        contactInfo.setReceiverName(contactCursor.getString(1));
-	                        contactInfo.setGroupId(groupId);
-	                        contactList.add(contactInfo);
-//	                        String phonenumber = contactCursor.getString(1).replaceAll("-",
-//	                                        "");
+		if(groupCursor.moveToFirst()){
+			do{
+
+				int nameColumnIndex = groupCursor.getColumnIndex(Phone.DISPLAY_NAME);
+				
+				String name = groupCursor.getString(nameColumnIndex);
+				
+				long contactId = groupCursor.getLong(groupCursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+				
+				Cursor numberCursor = getContentResolver().query(Phone.CONTENT_URI, new String[]{Phone.NUMBER}, Phone.CONTACT_ID + " = " + contactId, null, null);
+			
+				if(numberCursor.moveToFirst()){
+					int numberColumnIndex = numberCursor.getColumnIndex(Phone.NUMBER);
+					do{
+						String phoneNumber = numberCursor.getString(numberColumnIndex);
+						Log.d("your tag", "contact " + name + ":" + phoneNumber);
+						
+						contactInfo = new Contact();
+                        contactInfo.setReceiverPhoneNo(phoneNumber);
+                        contactInfo.setReceiverName(name);
+                        contactInfo.setGroupId(groupId);
+                        contactList.add(contactInfo);
+						
+					}while(numberCursor.moveToNext());
+					numberCursor.close();	
+				}
+			}while(groupCursor.moveToNext());
+			groupCursor.close();
+		}	
+//        Uri uri = 
+////        		ContactsContract.Data.CONTENT_URI;
+//        		ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+//        String[] projections = //null;
+//        		new String[] {
+////        		ContactsContract.Data.CONTACT_ID,
+//        		ContactsContract.CommonDataKinds.Phone.NUMBER,
+//        		ContactsContract.Data.DISPLAY_NAME
+//        		};
+////        		new String[] {
+////                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+////                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+////                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+////                        ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID};
+//        // where 절 조건 정의
+//        // ref.] 
+//        //       1. http://withwani.tistory.com/153 
+//        //       2. http://www.tutorialspoint.com/sqlite/sqlite_like_clause.htm
+//        //       3. http://chunic.blogspot.kr/2013/10/blog-post.html
+//        String selection = "";
+//        selection += (contactId > -1) ? Phone.CONTACT_ID + " = " + contactId : "";
+////        selection += (StringUtil.isNotNull(groupId)) 
+////        				?  ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = " + Long.parseLong(groupId) + " AND "
+////        				 + ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE 	 + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE +"'"
+////            			 + ContactsContract.Data.MIMETYPE 	 + " = '" + ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE +"'"
+////        				 : "" ;
+//        selection += (StringUtil.isNotNull(groupId) && StringUtil.isNotNull(searchKeyword)) ? " AND " : "";
+//        selection += (StringUtil.isNotNull(searchKeyword)) ? ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%' " : "";
+//        
+//        
+//        String[] selectionArgs = null;
+//        String sortOrder = 
+//        		ContactsContract.Data.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+//
+//        Cursor contactCursor = getContentResolver().query(uri, projections,
+//                        selection, selectionArgs, sortOrder);
+//        List<Contact> contactList = new ArrayList<Contact>();
+//        Contact contactInfo = null;
+//        int contactCursorCnt = contactCursor.getCount();
+//        
+//        if(contactCursorCnt > 0){        	
+//        
+//	        if (contactCursor.moveToFirst()) {
+//	
+//	                do {
+//	                	
+////	                	for(int i = 0 ; i < contactCursor.getColumnCount() ; i++){
+////	                		System.out.println(i + " : " + contactCursor.getColumnName(i) + ", " + contactCursor.getString(i) + ", " + contactCursor.getString(contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+////	                	}
+//	                	
+//	                        contactInfo = new Contact();
+//	                        contactInfo.setReceiverPhoneNo(contactCursor.getString(0));
+//	                        contactInfo.setReceiverName(contactCursor.getString(1));
+//	                        contactInfo.setGroupId(groupId);
+//	                        contactList.add(contactInfo);
+////	                        String phonenumber = contactCursor.getString(1).replaceAll("-",
+////	                                        "");
+////	                        
+////	                        String headPhoneNo = phonenumber.substring(0, 3);
+////	                        
+////	                        if (phonenumber.length() == 10) {
+////	                                phonenumber = headPhoneNo + "-"
+////	                                                + phonenumber.substring(3, 6) + "-"
+////	                                                + phonenumber.substring(6);
+////	                        } else if (phonenumber.length() > 8) {
+////	                                phonenumber = headPhoneNo + "-"
+////	                                                + phonenumber.substring(3, 7) + "-"
+////	                                                + phonenumber.substring(7);
+////	                        }
+////	//                         contactInfo.setPhotoId(contactCursor.getLong(0));
+////	                        
+////	                        if(headPhoneNo.equals("010") || headPhoneNo.equals("011") || headPhoneNo.indexOf("82") > 0){
+////	                                contactInfo.setReceiverPhoneNo(phonenumber);
+////	                                contactInfo.setReceiverName(contactCursor.getString(2));
+////	                                contactInfo.setGroupId(contactCursor.getString(3));
+////	                                contactList.add(contactInfo);                                        
+////	                        }
 //	                        
-//	                        String headPhoneNo = phonenumber.substring(0, 3);
-//	                        
-//	                        if (phonenumber.length() == 10) {
-//	                                phonenumber = headPhoneNo + "-"
-//	                                                + phonenumber.substring(3, 6) + "-"
-//	                                                + phonenumber.substring(6);
-//	                        } else if (phonenumber.length() > 8) {
-//	                                phonenumber = headPhoneNo + "-"
-//	                                                + phonenumber.substring(3, 7) + "-"
-//	                                                + phonenumber.substring(7);
-//	                        }
-//	//                         contactInfo.setPhotoId(contactCursor.getLong(0));
-//	                        
-//	                        if(headPhoneNo.equals("010") || headPhoneNo.equals("011") || headPhoneNo.indexOf("82") > 0){
-//	                                contactInfo.setReceiverPhoneNo(phonenumber);
-//	                                contactInfo.setReceiverName(contactCursor.getString(2));
-//	                                contactInfo.setGroupId(contactCursor.getString(3));
-//	                                contactList.add(contactInfo);                                        
-//	                        }
-	                        
-	                } while (contactCursor.moveToNext());
-	        }
-        }
+//	                } while (contactCursor.moveToNext());
+//	        }
+//        }
         return contactList;
 	}
 	

@@ -1,6 +1,9 @@
-package com.leejw.mygroupmsg.contact;
+package com.leejw.mygroupmsg.group;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.leejw.mygroupmsg.contact.Contact;
 
 public class Group implements Serializable{
 	private String groupId;
@@ -11,6 +14,8 @@ public class Group implements Serializable{
 	private String groupDelete;
 	private String groupVisible;
 	private int contactId;
+	
+	private List<Contact> contactList;
 	
 	public String getGroupId() {
 		return groupId;
@@ -59,6 +64,12 @@ public class Group implements Serializable{
 	}
 	public void setContactId(int contactId) {
 		this.contactId = contactId;
+	}
+	public List<Contact> getContactList() {
+		return contactList;
+	}
+	public void setContactList(List<Contact> contactList) {
+		this.contactList = contactList;
 	}
 
 }
