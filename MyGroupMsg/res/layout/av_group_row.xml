@@ -7,13 +7,13 @@
 	    android:id="@+id/groupName"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:textSize="35sp" />
+	    android:textSize="25sp" />
 	<TextView 
 	    android:id="@+id/groupId"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_below="@+id/groupName"
-	    android:textSize="20sp">
+	    android:textSize="15sp">
 	</TextView>
 	<ListView 
 	    android:id="@+id/contactList"

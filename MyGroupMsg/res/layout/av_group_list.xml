@@ -3,10 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
+    <!-- 
+    ref.] http://stackoverflow.com/questions/10788688/programmatically-select-item-listview
+     -->
 	<ListView 
 	    android:id="@+id/groupList"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent">
+	    android:layout_height="match_parent"
+	    android:choiceMode="multipleChoice"
+	    >
 	</ListView>
 	<TextView
 		android:id="@+id/status"

@@ -16,13 +16,18 @@ import android.provider.ContactsContract.Data;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.leejw.mygroup.adapter.GroupAdapter;
 import com.leejw.mygroupmsg.R;
+import com.leejw.mygroupmsg.adapter.GroupAdapter;
 import com.leejw.mygroupmsg.contact.Contact;
+import com.leejw.mygroupmsg.dao.GroupDao;
 import com.leejw.utils.StringUtil;
 
 public class GroupListActivity extends Activity{
@@ -46,7 +51,10 @@ public class GroupListActivity extends Activity{
 		statusTextView = (TextView) findViewById(R.id.status);
 		
 		groupInfos = new ArrayList<Group>();
-		groupList = this.getGroupList(null);
+		
+		GroupDao groupDao = new GroupDao();
+		
+		groupList = groupDao.getGroupList(null, this);
 		
 		totalListCnt = (StringUtil.isNotNull(groupList)) ? groupList.size() : 0;
 				
@@ -81,6 +89,7 @@ public class GroupListActivity extends Activity{
 		groupListView.addFooterView(linearLayout);
 		groupListView.setAdapter(adapter);
 		
+		// scrol event
 		groupListView.setOnScrollListener(new OnScrollListener() {
 			
 			@Override
@@ -88,7 +97,6 @@ public class GroupListActivity extends Activity{
 				// TODO Auto-generated method stub
 				
 			}
-			
 			
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
@@ -106,7 +114,21 @@ public class GroupListActivity extends Activity{
 				}
 			}
 		});
+		
+		groupListView.setOnItemClickListener(new OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View clickedView, int position,
+					long id) {
+				// TODO Auto-generated method stub
+				TextView childViewGroupName = (TextView) ((RelativeLayout)clickedView).getChildAt(0);
+				TextView childViewGroupId = (TextView) ((RelativeLayout)clickedView).getChildAt(1);
+				
+				Toast.makeText(getApplicationContext(), childViewGroupName.getText().toString(), Toast.LENGTH_LONG).show();
+			
+			}
+			
+		});
 	}
 	
 	private class getMoreItems extends AsyncTask<ArrayList<Group>, Integer, Long> {
