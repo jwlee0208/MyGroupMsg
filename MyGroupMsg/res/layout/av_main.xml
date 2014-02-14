@@ -12,22 +12,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.40"
             android:gravity="center"
             android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/button1"
-                android:layout_width="102dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.40"
+                android:layout_weight="0.50"
                 android:text="초기화" />
 
             <Button
                 android:id="@+id/button2"
-                android:layout_width="114dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="0.30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.50"
                 android:text="수신자선택" />
         </LinearLayout>
 
@@ -36,7 +35,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_weight="0.40"
+            android:layout_weight="0.50"
             android:height="30dip"
             android:text="메시지에 ##을 입력하시면 선택한 수신자 명으로 치환됩니다."
             android:textAppearance="?android:attr/textAppearanceLarge"

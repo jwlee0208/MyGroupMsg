@@ -3,6 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
     android:orientation="vertical">
+	<TextView 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="[ Select person who you want to send message. ]"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="Select" />
+    </LinearLayout>
+
     <ExpandableListView 
         android:id="@+id/ex_group_list"
         android:layout_width="match_parent"

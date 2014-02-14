@@ -37,7 +37,6 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 		return childList.get(groupPosition).get(childPosition);
 	}
 
-
 	@Override
 	public long getChildId(int groupPosition, int childPosition) {
 		// TODO Auto-generated method stub
@@ -52,14 +51,22 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 		
 		if(v == null){
 			viewHolder = new ViewHolder();
-			v = inflater.inflate(R.layout.av_list_row, null);
-			viewHolder.contact_nm = (TextView)v.findViewById(R.id.tv_contact);
+			v = inflater.inflate(R.layout.av_contact_row, null);
+//			v = inflater.inflate(R.layout.av_list_row, null);
+//			viewHolder.contact_nm = (TextView)v.findViewById(R.id.tv_contact);
+			viewHolder.contact_nm = (TextView)v.findViewById(R.id.receiverChkbox);
 			v.setTag(viewHolder);
 		}else{
 			viewHolder = (ViewHolder)v.getTag();
 		}
 		
-		viewHolder.contact_nm.setText(getChild(groupPosition, childPosition).getReceiverName());
+		Contact contactInfo = getChild(groupPosition, childPosition);
+		String receiverName = contactInfo.getReceiverName();
+		String receiverPhoneNo = contactInfo.getReceiverPhoneNo();
+		
+		String receiverInfo = receiverName + ";" + receiverPhoneNo;
+		
+		viewHolder.contact_nm.setText(receiverInfo);
 
 		return v;
 	}
@@ -95,8 +102,10 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 			
 		if(v == null){
 			viewHolder = new ViewHolder();
-			v = inflater.inflate(R.layout.av_list_row, parent, false);
-			viewHolder.group_nm = (TextView) v.findViewById(R.id.tv_group);
+//			v = inflater.inflate(R.layout.av_list_row, parent, false);
+			v = inflater.inflate(R.layout.av_group_row, parent, false);
+			viewHolder.group_nm = (TextView) v.findViewById(R.id.groupName);
+			viewHolder.group_id = (TextView) v.findViewById(R.id.groupId);
 			v.setTag(viewHolder);
 		}else{
 			viewHolder = (ViewHolder)v.getTag();
@@ -110,6 +119,9 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 		}
 		
 		viewHolder.group_nm.setText(getGroup(groupPosition).getGroupTitle());
+//		viewHolder.group_nm.setId(groupPosition);
+		viewHolder.group_id.setText(getGroup(groupPosition).getGroupId());
+//		viewHolder.group_id.setId(groupPosition);
 		
 		return v;
 	}
@@ -128,6 +140,7 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 
 	class ViewHolder{
 		public TextView group_nm;
+		public TextView group_id;
 		public TextView contact_nm;
 	}
 }
