@@ -25,8 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leejw.mygroupmsg.R;
+import com.leejw.mygroupmsg.adapter.ContactAdapter;
 import com.leejw.mygroupmsg.adapter.GroupAdapter;
 import com.leejw.mygroupmsg.contact.Contact;
+import com.leejw.mygroupmsg.dao.ContactDao;
 import com.leejw.mygroupmsg.dao.GroupDao;
 import com.leejw.utils.StringUtil;
 
@@ -123,8 +125,27 @@ public class GroupListActivity extends Activity{
 				// TODO Auto-generated method stub
 				TextView childViewGroupName = (TextView) ((RelativeLayout)clickedView).getChildAt(0);
 				TextView childViewGroupId = (TextView) ((RelativeLayout)clickedView).getChildAt(1);
+				ListView childViewListView = (ListView) ((RelativeLayout)clickedView).getChildAt(2);
 				
-				Toast.makeText(getApplicationContext(), childViewGroupName.getText().toString(), Toast.LENGTH_LONG).show();
+				String selectedGroupId = childViewGroupId.getText().toString();
+				
+				ContactDao contactDao = new ContactDao();
+				
+				List<Contact> contactList = contactDao.getContactList(null, selectedGroupId, getApplicationContext());
+				
+				ArrayList<Contact> contacts = new ArrayList<Contact>();
+				
+				if(contactList.size() > 0){
+					for(int contactCnt = 0 ; contactCnt < contactList.size(); contactCnt++){
+						contacts.add(contactList.get(contactCnt));		
+					}
+				}
+				
+				ContactAdapter contactAdapter = new ContactAdapter(getApplicationContext(), contacts);
+				
+				childViewListView.setAdapter(contactAdapter);
+				
+//				Toast.makeText(getApplicationContext(), childViewGroupName.getText().toString(), Toast.LENGTH_LONG).show();
 			
 			}
 			

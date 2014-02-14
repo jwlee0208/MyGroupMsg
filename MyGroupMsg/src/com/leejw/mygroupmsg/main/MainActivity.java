@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.contact.Contact;
-import com.leejw.mygroupmsg.group.GroupListActivity;
+import com.leejw.mygroupmsg.group.GroupActivity;
 import com.leejw.utils.StringUtil;
 
 public class MainActivity extends Activity{
@@ -135,7 +135,7 @@ public class MainActivity extends Activity{
 				// TODO Auto-generated method stub
 				
 //				Intent intent = new Intent(getBaseContext(), ContactActivity.class);
-				Intent intent = new Intent(getBaseContext(), GroupListActivity.class);
+				Intent intent = new Intent(getBaseContext(), GroupActivity.class);
 				startActivityForResult(intent, 2);
 			}
 		});

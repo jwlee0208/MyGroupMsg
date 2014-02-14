@@ -70,6 +70,8 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 		
 		String receiverInfo = contactInfo.getReceiverName() + ";" + contactInfo.getReceiverPhoneNo();
 		
+		System.out.println("receiverInfo : " + receiverInfo);
+		
 		holder.chkBox.setText(receiverInfo);
 		holder.chkBox.setId(position);
 		

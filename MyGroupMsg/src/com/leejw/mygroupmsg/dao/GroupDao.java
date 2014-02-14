@@ -1,7 +1,6 @@
 package com.leejw.mygroupmsg.dao;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,7 +11,7 @@ import com.leejw.mygroupmsg.group.Group;
 import com.leejw.utils.StringUtil;
 
 public class GroupDao {
-	public List<Group> getGroupList(String searchKeyword, Context context){
+	public ArrayList<Group> getGroupList(String searchKeyword, Context context){
 		Uri uri = ContactsContract.Groups.CONTENT_URI;
 
 		String[] projections = new String[] {
@@ -35,7 +34,7 @@ public class GroupDao {
         		context.getContentResolver().query(uri, projections,
                         selection, selectionArgs, sortOrder);
         
-		List<Group> groupList = new ArrayList<Group>();
+		ArrayList<Group> groupList = new ArrayList<Group>();
 		Group groupObj = null;
 		
 		if(groupCursor.moveToFirst()){
