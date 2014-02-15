@@ -1,82 +1,51 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/button1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.50"
-                android:text="초기화" />
+                android:text="Initiate" />
 
             <Button
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0.50"
-                android:text="수신자선택" />
+                android:text="Select Receiver" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/textView1"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_weight="0.50"
             android:height="30dip"
-            android:text="메시지에 ##을 입력하시면 선택한 수신자 명으로 치환됩니다."
+            android:text="Convert to selected receiver's name, if you insert to '##' character"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="14dp" />
-    </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="95dp"
-        android:layout_marginBottom="48dp" >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <EditText
+        <EditText
                 android:id="@+id/editText1"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:ems="10" >
-
                 <requestFocus />
-            </EditText>
-        </RelativeLayout>
-    </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/linearLayout1">
+        </EditText>
 
         <Button
             android:id="@+id/button0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="전송" />
-    </RelativeLayout>
-
-</RelativeLayout>
+            android:text="Send" />
+</LinearLayout>

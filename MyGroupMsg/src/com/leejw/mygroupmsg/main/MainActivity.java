@@ -67,6 +67,8 @@ public class MainActivity extends Activity{
 					if(contactListSize > 0){
 						System.out.println("------------ [ start ] ------------");
 						for(Contact contactInfo : contactList){
+							
+							System.out.println("contactInfo : " + contactInfo.getReceiverName() + ", " + contactInfo.getReceiverPhoneNo());
 							sendSMS(contactInfo.getReceiverName(), contactInfo.getReceiverPhoneNo(), msgStr);
 						}
 						System.out.println("------------ [ finish ] -----------");
@@ -84,8 +86,8 @@ public class MainActivity extends Activity{
 			 * 2. http://www.androes.com/69
 			 * 3. http://anditstory.tistory.com/entry/android-send-SMS
 			 */
-			private void sendSMS(String receiverName, String receiverPhoneNo,
-					String msgStr) {
+			@SuppressWarnings("unused")
+			private void sendSMS(String receiverName, String receiverPhoneNo, String msgStr) {
 				// TODO Auto-generated method stub
 				if(StringUtil.isNotNull(msgStr)){
 					String convertedMsg = msgStr.replaceAll("##", receiverName);
