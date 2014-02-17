@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.adapter.BaseExpandableAdapter;
@@ -94,7 +93,7 @@ public class GroupActivity extends Activity{
 				
 				groupInfos = new ArrayList<Group>();
 
-				if(groupListCnt > 0){
+				if(groupListCnt > 15){
 					for(int groupCnt = 0 ; groupCnt < 15; groupCnt++){
 						groupInfos.add(groupList.get(groupCnt));				
 					}
@@ -117,7 +116,7 @@ public class GroupActivity extends Activity{
 						
 						contactList = new ContactDao().getContactList(null, groupId, this);
 						
-						System.out.println("contactList 사이즈 : " + contactList.size());
+//						System.out.println("contactList 사이즈 : " + contactList.size());
 						
 						if(StringUtil.isNotNull(contactList)){
 							childList.add(contactList);						
@@ -151,14 +150,14 @@ public class GroupActivity extends Activity{
 						}
 					}
 				});
-				adapter = new BaseExpandableAdapter(this, groupInfos, childList);				
+//				adapter = new BaseExpandableAdapter(this, groupInfos, childList);				
 			}
+//			adapter = new BaseExpandableAdapter(this, groupInfos, childList);
 		}
-
-		
 
 		linearLayout.setVisibility(View.INVISIBLE);
 
+		adapter = new BaseExpandableAdapter(this, groupInfos, childList);
 		groupListView.addFooterView(linearLayout);
 		groupListView.setAdapter(adapter);
 		
@@ -167,16 +166,18 @@ public class GroupActivity extends Activity{
 	private class getMoreItems extends AsyncTask<ArrayList<Group>, Integer, Long> {
 
 		@Override
-		protected Long doInBackground(ArrayList<Group>... arg0) {
+		protected Long doInBackground(ArrayList<Group>... groupArr) {
 			// TODO Auto-generated method stub
 			Long result = 0L;
-			Group groupObj = null;
-			String groupId;
+//			Group groupObj = null;
+//			String groupId;
 			
-			if(groupListCnt >= groupCnt + 10){
-				int tmpEnd = groupCnt + 10;
+			if(groupListCnt >= groupCnt + 15){
+				int tmpEnd = groupCnt + 15;
 				for(; groupCnt < tmpEnd ; groupCnt++){
 					groupInfos.add(groupList.get(groupCnt));
+//					groupObj = (Group)groupArr[groupCnt].get(groupCnt);
+//					groupInfos.add(groupObj);
 				}
 			}else{
 				for(;groupCnt < groupListCnt ; groupCnt++){
@@ -184,29 +185,8 @@ public class GroupActivity extends Activity{
 				}
 			}
 
-//			int groupInfosCnt = (StringUtil.isNotNull(groupInfos)) ? groupInfos.size() : 0;
-//			
-//			if(groupInfosCnt > 0){
-//				
-//				childList = new ArrayList<ArrayList<Contact>>();
-//				
-//				for(int groupInfoCnt = 0 ; groupInfoCnt < groupInfosCnt ; groupInfoCnt++){
-//						
-//					groupObj = (Group)groupInfos.get(groupInfoCnt);
-//					groupId = groupObj.getGroupId();
-//					
-//					contactList = new ContactDao().getContactList(null, groupId, context);
-//					
-//					System.out.println("contactList 사이즈 : " + contactList.size());
-//					
-//					if(StringUtil.isNotNull(contactList)){
-//						childList.add(contactList);						
-//					}
-//				}
-//			}
-			
 			try{
-				Thread.sleep(5000);
+				Thread.sleep(3000);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
