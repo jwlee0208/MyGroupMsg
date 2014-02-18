@@ -116,8 +116,6 @@ public class GroupActivity extends Activity{
 						
 						contactList = new ContactDao().getContactList(null, groupId, this);
 						
-//						System.out.println("contactList 사이즈 : " + contactList.size());
-						
 						if(StringUtil.isNotNull(contactList)){
 							childList.add(contactList);						
 						}
