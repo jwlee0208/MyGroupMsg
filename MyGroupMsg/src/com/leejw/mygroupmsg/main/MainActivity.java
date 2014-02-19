@@ -29,13 +29,13 @@ public class MainActivity extends Activity{
 		
 		final EditText textView = (EditText)findViewById(R.id.editText1);
 		
-		Button button00 = (Button)findViewById(R.id.button0);
+		Button sendBtn = (Button)findViewById(R.id.sendBtn);
 		Button button01 = (Button)findViewById(R.id.button1);
 		Button button02 = (Button)findViewById(R.id.button2);
 		/**
 		 *  전송
 		 */
-		button00.setOnClickListener(new OnClickListener(){
+		sendBtn.setOnClickListener(new OnClickListener(){
 			public void onClick(View v){
 				Toast.makeText(getApplicationContext(), "메시지 전송...", Toast.LENGTH_LONG).show();
 				

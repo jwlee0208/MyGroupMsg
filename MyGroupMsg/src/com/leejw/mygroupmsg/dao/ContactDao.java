@@ -40,11 +40,13 @@ public class ContactDao {
         selection += ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE + "'" ;
         selection += (StringUtil.isNotNull(searchKeyword)) ? " AND " + Contacts.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%'" : "";
         String[] selectionArgs = { groupId };	//{String.valueOf(groupId)};
-        String sortOrder = 
-        		Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+        String sortOrder = null;
+//        		Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
 
         Cursor grpCursor = 
         		context.getContentResolver().query(uri, projections, selection, selectionArgs, sortOrder);
+        
+        System.out.println("grpCursor.getCount() :  " + grpCursor.getCount());
         
 		if(grpCursor.moveToFirst()){
 			do{
@@ -64,12 +66,25 @@ public class ContactDao {
 					do{
 						String phoneNumber = numberCursor.getString(numberColumnIndex);
 						
-						contactInfo = new Contact();
-                        contactInfo.setReceiverPhoneNo(phoneNumber);
-                        contactInfo.setReceiverName(name);
-                        contactInfo.setGroupId(groupId);
-                        contactList.add(contactInfo);
+						phoneNumber = phoneNumber.replaceAll("-", "");
 						
+						contactInfo = new Contact();
+	                    contactInfo.setReceiverPhoneNo(phoneNumber);
+	                    contactInfo.setReceiverName(name);
+	                    contactInfo.setGroupId(groupId);
+	                    
+	                    int duplCnt = 0;
+	                    // 중복 제거
+	                    if(contactList.size() > 0){
+		                    for(Contact tempContact : contactList){
+		                    	if(tempContact.getReceiverName().equals(name) && tempContact.getReceiverPhoneNo().equals(phoneNumber))
+		                    		duplCnt++;
+		                    }	                    	
+	                    }
+	                    
+	                    if(duplCnt < 1)
+	                    	contactList.add(contactInfo);							
+							                    
 //                        System.out.println("groupId : " + groupId + ", receiverPhoneNo : " + phoneNumber + ", name : " + name);
                         
 					}while(numberCursor.moveToNext());
@@ -78,6 +93,7 @@ public class ContactDao {
 			}while(grpCursor.moveToNext());
 			grpCursor.close();
 		}	
+		
         return contactList;
 	}
 }

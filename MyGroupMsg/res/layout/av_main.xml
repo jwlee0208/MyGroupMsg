@@ -1,82 +1,75 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/button1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.50"
-                android:text="초기화" />
+                android:layout_height="match_parent"
+                android:layout_weight="0.87"
+                android:background="#87cefa"
+                android:text="Initiate" />
 
             <Button
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="44dp"
                 android:layout_weight="0.50"
-                android:text="수신자선택" />
+                android:background="#87cefa"
+                android:text="Select Receiver" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/textView1"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_weight="0.50"
-            android:height="30dip"
-            android:text="메시지에 ##을 입력하시면 선택한 수신자 명으로 치환됩니다."
+            android:layout_weight="0.00"
+            android:height="50dip"
+            android:padding="5dp"
+            android:text="Convert to selected receiver&apos;s name, if you insert to &apos;##&apos; character"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="14dp" />
-    </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="95dp"
-        android:layout_marginBottom="48dp" >
-
-        <RelativeLayout
+        <EditText
+            android:id="@+id/editText1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_weight="0.01"
+            android:padding="5dp"
+            android:text="Please, Write your message."
+            android:textColor="#87cefa" >
 
-            <EditText
-                android:id="@+id/editText1"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:ems="10" >
+<!--                 <requestFocus /> -->
+        </EditText>
 
-                <requestFocus />
-            </EditText>
-        </RelativeLayout>
-    </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/linearLayout1">
-
-        <Button
-            android:id="@+id/button0"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="전송" />
-    </RelativeLayout>
+            android:layout_height="wrap_content" >
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/sendBtn"
+                android:layout_width="177dp"
+                android:layout_height="48dp"
+                android:layout_weight="0.98"
+                android:background="#87cefa"
+                android:text="Send" />
+
+            <Button
+                android:id="@+id/modifyReceiverBtn"
+                android:layout_width="140dp"
+                android:layout_height="48dp"
+                android:layout_weight="22.50"
+                android:background="#87cefa"
+                android:text="Modify Receiver List" />
+        </LinearLayout>
+
+</LinearLayout>
