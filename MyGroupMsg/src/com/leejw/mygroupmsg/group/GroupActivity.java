@@ -276,11 +276,17 @@ public class GroupActivity extends Activity {
 				viewHolder.contact_nm  = (CheckBox) v.findViewById(R.id.receiverChkbox);
 				viewHolder.receiver_nm = (TextView) v.findViewById(R.id.receiverName);
 				viewHolder.receiver_no = (TextView) v.findViewById(R.id.receiverPhoneNo);
+				
+//				viewHolder.contact_nm.setChecked(false);
+				
 				v.setTag(viewHolder);
 			} else {
 				viewHolder = (ViewHolder) v.getTag();
+//				viewHolder.contact_nm.setChecked(viewHolder.contact_nm.isChecked());
 			}
 
+//			viewHolder.contact_nm.setChecked(false);
+			
 			Contact contactInfo = getChild(groupPosition, childPosition);
 			String receiverName = contactInfo.getReceiverName();
 			String receiverPhoneNo = contactInfo.getReceiverPhoneNo();
@@ -288,8 +294,8 @@ public class GroupActivity extends Activity {
 			String receiverInfo = receiverName + ";" + receiverPhoneNo;
 
 			viewHolder.contact_nm.setText(receiverInfo);
-			viewHolder.receiver_nm.setText(receiverName);
-			viewHolder.receiver_no.setText(receiverPhoneNo);
+//			viewHolder.receiver_nm.setText(receiverName);
+//			viewHolder.receiver_no.setText(receiverPhoneNo);
 			
 			viewHolder.contact_nm.setOnClickListener(new OnClickListener() {
 
@@ -302,8 +308,12 @@ public class GroupActivity extends Activity {
 
 //					System.out.println("RR : " + viewHolder.contact_nm.getText().toString());
 					
+					CheckBox chkBox = (CheckBox)v;
 					
-					updateData(viewHolder.contact_nm.getText().toString(), viewHolder.contact_nm.isChecked());
+					boolean isChecked = chkBox.isChecked();
+//					chkBox.setChecked(isChecked);
+					updateData(chkBox.getText().toString(), isChecked);
+					
 				}
 			});
 
@@ -382,10 +392,10 @@ public class GroupActivity extends Activity {
 			}
 
 			Group groupObj = getGroup(groupPosition);
-			
+			ArrayList<Contact> tempContactList = (ArrayList<Contact>) groupObj.getContactList();
 			viewHolder.group_nm.setText(groupObj.getGroupTitle());
 			viewHolder.group_id.setText(groupObj.getGroupId());
-			viewHolder.group_child_cnt.setText("(" + groupObj.getContactList().size() + ")");
+			viewHolder.group_child_cnt.setText("(" + ((StringUtil.isNotNull(tempContactList)) ? tempContactList.size() : 0) + ")");
 
 			return v;
 		}
@@ -467,10 +477,7 @@ public class GroupActivity extends Activity {
 						if (contact.getReceiverName().equals(receiverName)
 								&& contact.getReceiverPhoneNo().equals(
 										cellPhoneNo)) {
-							selectedContactList.remove(contact); // java.lang.IndexOutOfBoundsException:
-																	// Invalid
-																	// index 2,
-																	// size is 2
+							selectedContactList.remove(contact);
 							selectedContactListSize--;
 						}
 					}

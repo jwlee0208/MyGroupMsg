@@ -30,7 +30,9 @@
         <activity android:name="com.leejw.mygroupmsg.group.GroupListActivity">
       	</activity>
 		<activity android:name="com.leejw.mygroupmsg.group.GroupActivity">
-      	</activity>      	
+      	</activity>    
+		<activity android:name="com.leejw.mygroupmsg.contact.SelectedContactActivity">
+      	</activity>          	  	
     </application>
 
 </manifest>

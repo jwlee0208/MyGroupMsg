@@ -16,39 +16,119 @@ import android.widget.Toast;
 
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.contact.Contact;
+import com.leejw.mygroupmsg.contact.SelectedContactActivity;
 import com.leejw.mygroupmsg.group.GroupActivity;
 import com.leejw.utils.StringUtil;
 
 public class MainActivity extends Activity{
 	
 	ArrayList<Contact> contactList;
+	EditText textView;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.av_main);
 		
-		final EditText textView = (EditText)findViewById(R.id.editText1);
+		textView = (EditText)findViewById(R.id.editText1);
+				
+		setHeader();
 		
-		Button sendBtn = (Button)findViewById(R.id.sendBtn);
+		setFooter();
+
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void onActivityResult(int requestCode, int resultCode, Intent Data){
+		super.onActivityResult(requestCode, resultCode, Data);
+		
+		if(requestCode == 2){
+			Toast.makeText(getApplicationContext(), "수신자 선택 창 전환...", Toast.LENGTH_LONG).show();
+			
+			if(resultCode == 2){
+				// ref.] http://blog.daum.net/haha25/5387851
+				this.contactList = (ArrayList<Contact>)Data.getSerializableExtra("contactList");
+				
+				if(contactList != null){
+					int contactListSize = contactList.size();
+					
+					if(contactListSize < 1){
+						Toast.makeText(getApplicationContext(), "선택된 수신자가 없습니다.", Toast.LENGTH_LONG).show();
+					}
+				}
+			}
+		}else if(requestCode == 3){
+			this.contactList = (ArrayList<Contact>)Data.getSerializableExtra("contactList");
+			
+			if(contactList != null){
+				int contactListSize = contactList.size();
+				
+				if(contactListSize < 1){
+					Toast.makeText(getApplicationContext(), "선택된 수신자가 없습니다.", Toast.LENGTH_LONG).show();
+				}
+			}
+			
+		}
+	}
+	/**
+	 * 상단 버튼 영역 설정
+	 */
+	private void setHeader(){
 		Button button01 = (Button)findViewById(R.id.button1);
 		Button button02 = (Button)findViewById(R.id.button2);
+		
+		/**
+		 * 초기화
+		 */
+		button01.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getApplicationContext(), "Initiate...", Toast.LENGTH_LONG).show();
+				Intent intent = getIntent();
+				finish();
+				startActivity(intent);
+			}
+		});
+		
+		/**
+		 * 수신자 선택
+		 */
+		button02.setOnClickListener(new OnClickListener() {			
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+//				Intent intent = new Intent(getBaseContext(), ContactActivity.class);
+				Intent intent = new Intent(getBaseContext(), GroupActivity.class);
+				startActivityForResult(intent, 2);
+			}
+		});
+	}
+	
+	private void setFooter(){
+		Button sendBtn = (Button)findViewById(R.id.sendBtn);
+		Button modifyReceiverBtn = (Button)findViewById(R.id.modifyReceiverBtn);
+
 		/**
 		 *  전송
 		 */
 		sendBtn.setOnClickListener(new OnClickListener(){
 			public void onClick(View v){
-				Toast.makeText(getApplicationContext(), "메시지 전송...", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_LONG).show();
 				
 				System.out.println("textView.getText().toString() : " + textView.getText().toString());
 				
 				String msgStr = textView.getText().toString();
 				if(msgStr.isEmpty()){
-					Toast.makeText(getApplicationContext(), "입력된 메시지가 없습니다.", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "No inserted message.", Toast.LENGTH_LONG).show();
 					return;
 				}
 				
 				if(contactList == null || contactList.size() < 1){
-					Toast.makeText(getApplicationContext(), "선택된 수신자가 없습니다.", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "No selected receivers.", Toast.LENGTH_LONG).show();
 					return;
 				}
 				
@@ -98,70 +178,34 @@ public class MainActivity extends Activity{
 					System.out.println(receiverName + ", " + receiverPhoneNo + ", " + convertedMsg + ", " + myPhoneNo);
 					smsManager.sendTextMessage(receiverPhoneNo, myPhoneNo, convertedMsg, null, null);
 					
-					String sentMsg = "[" + receiverPhoneNo + "]" + receiverName + "에게 전송한 메시지가 ";
+					String sentMsg = "[" + receiverPhoneNo + "]" + receiverName + "";
 					try{
-						System.out.println(sentMsg + "정상 발송되었습니다.");
+						System.out.println(sentMsg + " normally sended message.");
 					}catch(Exception ex){
-						System.out.println(sentMsg + "발송되지 않았습니다.");
+						System.out.println(sentMsg + " will not give a message.");
 						ex.printStackTrace();
 					}			
 				}
 			}
-
-
 		});
 		/**
-		 * 초기화
+		 * 선택된 수신자 목록
 		 */
-		button01.setOnClickListener(new OnClickListener() {
+		modifyReceiverBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Toast.makeText(getApplicationContext(), "초기화...", Toast.LENGTH_LONG).show();
-				Intent intent = getIntent();
-				finish();
-				startActivity(intent);
+				// ref.] ArrayList<T> 형 데이터를 다른 액티비티로 전달
+				// http://www.androidside.com/bbs/board.php?bo_table=b49&wr_id=87165
+				Intent intent = new Intent(getApplicationContext(), SelectedContactActivity.class);		
+				intent.putExtra("contactList", contactList);
+//				Bundle b = new Bundle();
+//				b.putParcelableArrayList("contactList", (ArrayList<? extends Parcelable>)contactList);
+//				intent.putExtras(b);
+				startActivityForResult(intent, 3);
 			}
 		});
-		
-		/**
-		 * 수신자 선택
-		 */
-		button02.setOnClickListener(new OnClickListener() {			
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-//				Intent intent = new Intent(getBaseContext(), ContactActivity.class);
-				Intent intent = new Intent(getBaseContext(), GroupActivity.class);
-				startActivityForResult(intent, 2);
-			}
-		});
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected void onActivityResult(int requestCode, int resultCode, Intent Data){
-		super.onActivityResult(requestCode, resultCode, Data);
-		
-		if(requestCode == 2){
-			Toast.makeText(getApplicationContext(), "수신자 선택 창 전환...", Toast.LENGTH_LONG).show();
-			
-			if(resultCode == 2){
-				// ref.] http://blog.daum.net/haha25/5387851
-				this.contactList = (ArrayList<Contact>)Data.getSerializableExtra("contactList");
-				
-				if(contactList != null){
-					int contactListSize = contactList.size();
-					
-					if(contactListSize < 1){
-						Toast.makeText(getApplicationContext(), "선택된 수신자가 없습니다.", Toast.LENGTH_LONG).show();
-					}
-				}
-			}
-		}
 	}
 //	/**
 //	 * 단체 메시지 발송 메서드
