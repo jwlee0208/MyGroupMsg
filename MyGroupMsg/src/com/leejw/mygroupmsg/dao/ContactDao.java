@@ -16,7 +16,7 @@ import com.leejw.utils.StringUtil;
 
 public class ContactDao {
 	/**
-	 * 주소록 조회
+	 * ��������� ������
 	 * @param searchKeyword
 	 * @param groupId
 	 * @return
@@ -28,7 +28,9 @@ public class ContactDao {
 		ArrayList<Contact> contactList = new ArrayList<Contact>();
 		Contact contactInfo = null;
 		
-		Uri uri = Data.CONTENT_URI;
+		Uri uri = 
+//				Contacts.CONTENT_URI;
+		Data.CONTENT_URI;
 
 		String[] projections = new String[] {
 				Contacts.DISPLAY_NAME
@@ -87,7 +89,7 @@ public class ContactDao {
 		                    contactInfo.setGroupId(groupId);
 		                    
 		                    int duplCnt = 0;
-		                    // 중복 제거
+		                    // ������ ������
 		                    if(contactList.size() > 0){
 			                    for(Contact tempContact : contactList){
 			                    	if(tempContact.getReceiverName().equals(name) && tempContact.getReceiverPhoneNo().equals(phoneNumber))

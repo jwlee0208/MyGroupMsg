@@ -62,18 +62,24 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 			convertView = LayoutInflater.from(getContext()).inflate(R.layout.av_contact_row, null);
 			holder = new ContactViewHolder();
 			holder.chkBox = (CheckBox)convertView.findViewById(R.id.receiverChkbox);
+			holder.receiverNm = (TextView)convertView.findViewById(R.id.receiverName);
+			holder.receiverNo = (TextView)convertView.findViewById(R.id.receiverPhoneNo);
 			
 			convertView.setTag(holder);
 		}else{
 			holder = (ContactViewHolder)convertView.getTag();
 		}
 		
-		String receiverInfo = contactInfo.getReceiverName() + ";" + contactInfo.getReceiverPhoneNo();
+		String receiverName = contactInfo.getReceiverName();
+		String receiverNumber = contactInfo.getReceiverPhoneNo();
+		String receiverInfo = receiverName + ";" + receiverNumber;
 		
 		System.out.println("receiverInfo : " + receiverInfo);
 		
 		holder.chkBox.setText(receiverInfo);
 		holder.chkBox.setId(position);
+		holder.receiverNm.setText(receiverName);
+		holder.receiverNo.setText(receiverNumber);
 		
 //		View vi = convertView;
 //		
@@ -108,9 +114,11 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 		return convertView;
 	}
 	
-	// ViewHolder의 사용
+	// ViewHolder��� ������
 	// Ref.] http://www.kmshack.kr/346
 	static class ContactViewHolder{
 		CheckBox chkBox;
+		TextView receiverNm;
+		TextView receiverNo;
 	}
 }

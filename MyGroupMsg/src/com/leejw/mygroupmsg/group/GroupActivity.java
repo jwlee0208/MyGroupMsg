@@ -58,7 +58,7 @@ public class GroupActivity extends Activity {
 		context = this.getApplicationContext();
 
 		selectedContactList = new ArrayList<Contact>();
-		// 상단 버튼 영역 설정
+		// ������ ������ ������ ������
 		setHeader();
 
 		groupList = new GroupDao().getGroupList(null, this);
@@ -294,16 +294,16 @@ public class GroupActivity extends Activity {
 			String receiverInfo = receiverName + ";" + receiverPhoneNo;
 
 			viewHolder.contact_nm.setText(receiverInfo);
-//			viewHolder.receiver_nm.setText(receiverName);
-//			viewHolder.receiver_no.setText(receiverPhoneNo);
+			viewHolder.receiver_nm.setText(receiverName);
+			viewHolder.receiver_no.setText(receiverPhoneNo);
 			
 			viewHolder.contact_nm.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					// Toast.makeText(context, "선택값 : "+
-					// chkbox.getText().toString() + ", 선택 여부 : " +
+					// Toast.makeText(context, "��������� : "+
+					// chkbox.getText().toString() + ", ������ ������ : " +
 					// chkbox.isChecked(), Toast.LENGTH_SHORT).show();
 
 //					System.out.println("RR : " + viewHolder.contact_nm.getText().toString());
@@ -384,7 +384,7 @@ public class GroupActivity extends Activity {
 				viewHolder = (ViewHolder) v.getTag();
 			}
 
-			// 그룹 열고 닫을 때
+			// ������ ������ ������ ���
 			if (isExpanded) {
 				
 			} else {
@@ -423,7 +423,7 @@ public class GroupActivity extends Activity {
 	}
 
 	/**
-	 * 연락처 객체에 정보 setting.
+	 * ��������� ��������� ������ setting.
 	 * 
 	 * @param receiverName
 	 * @param receiverPhoneNo
@@ -439,7 +439,7 @@ public class GroupActivity extends Activity {
 	}
 
 	/**
-	 * 반환할 리스트 객체에 데이터 추가/제거
+	 * ��������� ��������� ��������� ��������� ������/������
 	 * 
 	 * @param receiverInfo
 	 * @param isChecked
@@ -459,14 +459,14 @@ public class GroupActivity extends Activity {
 				// System.out.println("IS_CHECKED");
 				contactObj = this.setContact(receiverName, cellPhoneNo);
 
-				// 행 추가
+				// ��� ������
 				selectedContactList.add(contactObj);
 
 			} else {
-				// 체크박스 체크해제시 오류 해결 요망
+				// ������������ ��������������� ������ ������ ������
 				if (selectedContactListSize > 0) {
 					// System.out.println("IS_UNCHECKED");
-					// 왜 삭제가 안될까???
+					// ��� ��������� ���������???
 					// ref.]
 					// http://stackoverflow.com/questions/16460258/java-lang-indexoutofboundsexception-invalid-index-2-size-is-2
 					// selectedContactList.remove(contactObj);
@@ -489,10 +489,10 @@ public class GroupActivity extends Activity {
 	}
 
 	/**
-	 * 상단 버튼 영역 설정
+	 * ������ ������ ������ ������
 	 */
 	private void setHeader() {
-		// 상단 버튼
+		// ������ ������
 		Button cancelBtn = (Button) findViewById(R.id.cancel);
 		Button okBtn = (Button) findViewById(R.id.ok);
 		/**
