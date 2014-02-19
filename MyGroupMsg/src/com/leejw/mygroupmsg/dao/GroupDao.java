@@ -30,7 +30,7 @@ public class GroupDao {
         selection += (StringUtil.isNotNull(searchKeyword)) ? " AND " + ContactsContract.Groups.TITLE + " LIKE '%" + searchKeyword + "%'" : "";
                 
         String[] selectionArgs = null;
-        String sortOrder = ContactsContract.Groups.TITLE + " COLLATE LOCALIZED ASC";
+        String sortOrder = ContactsContract.Groups._ID + " COLLATE LOCALIZED ASC";
         // 그룹 정보 조회 커서
         Cursor groupCursor = 
         		context.getContentResolver().query(uri, projections, selection, selectionArgs, sortOrder);
@@ -52,7 +52,8 @@ public class GroupDao {
 			        if(childCnt > 0){
 						groupObj = new Group();
 						groupObj.setGroupId(groupId);
-						groupObj.setGroupTitle(groupCursor.getString(1) + " (" + childCnt + ")");
+//						groupObj.setGroupTitle(groupCursor.getString(1) + " (" + childCnt + ")");
+						groupObj.setGroupTitle(groupCursor.getString(1));
 						groupObj.setContactId(groupCursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
 						
 						groupList.add(groupObj);			        	

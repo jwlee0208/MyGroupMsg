@@ -68,22 +68,36 @@ public class ContactDao {
 						
 						phoneNumber = phoneNumber.replaceAll("-", "");
 						
-						contactInfo = new Contact();
-	                    contactInfo.setReceiverPhoneNo(phoneNumber);
-	                    contactInfo.setReceiverName(name);
-	                    contactInfo.setGroupId(groupId);
-	                    
-	                    int duplCnt = 0;
-	                    // 중복 제거
-	                    if(contactList.size() > 0){
-		                    for(Contact tempContact : contactList){
-		                    	if(tempContact.getReceiverName().equals(name) && tempContact.getReceiverPhoneNo().equals(phoneNumber))
-		                    		duplCnt++;
-		                    }	                    	
-	                    }
-	                    
-	                    if(duplCnt < 1)
-	                    	contactList.add(contactInfo);							
+				        String headPhoneNo = phoneNumber.substring(0, 3);
+				        
+				        if (phoneNumber.length() == 10) {
+				                phoneNumber = headPhoneNo + "-"
+				                                + phoneNumber.substring(3, 6) + "-"
+				                                + phoneNumber.substring(6);
+				        } else if (phoneNumber.length() > 8) {
+				                phoneNumber = headPhoneNo + "-"
+				                                + phoneNumber.substring(3, 7) + "-"
+				                                + phoneNumber.substring(7);
+				        }
+						
+				        if(headPhoneNo.equals("010") || headPhoneNo.equals("011") || headPhoneNo.indexOf("82") > 0){
+							contactInfo = new Contact();
+		                    contactInfo.setReceiverPhoneNo(phoneNumber);
+		                    contactInfo.setReceiverName(name);
+		                    contactInfo.setGroupId(groupId);
+		                    
+		                    int duplCnt = 0;
+		                    // 중복 제거
+		                    if(contactList.size() > 0){
+			                    for(Contact tempContact : contactList){
+			                    	if(tempContact.getReceiverName().equals(name) && tempContact.getReceiverPhoneNo().equals(phoneNumber))
+			                    		duplCnt++;
+			                    }	                    	
+		                    }
+		                    
+		                    if(duplCnt < 1)
+		                    	contactList.add(contactInfo);											        	
+				        }
 							                    
 //                        System.out.println("groupId : " + groupId + ", receiverPhoneNo : " + phoneNumber + ", name : " + name);
                         

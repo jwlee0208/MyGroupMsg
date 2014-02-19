@@ -89,12 +89,12 @@ public class GroupActivity extends Activity {
 				}
 				
 				
-				for(int j = 0 ; j < groupInfos.size() ; j++){
-					Group temp = (Group)groupInfos.get(j);
+//				for(int j = 0 ; j < groupInfos.size() ; j++){
+//					Group temp = (Group)groupInfos.get(j);
 //					System.out.println("groupInfo : " + temp.getGroupTitle() + ", " + temp.getGroupId());
-				}
+//				}
 			} else {
-System.out.println("22222");				
+//System.out.println("22222");				
 				for (groupCnt = 0; groupCnt < groupListCnt; groupCnt++) {
 					groupObj = (Group) groupList.get(groupCnt);
 
@@ -117,7 +117,7 @@ System.out.println("22222");
 		adapter = new BaseExpandableAdapter(this, groupInfos, childInfos);
 
 		groupListView = (ExpandableListView) findViewById(R.id.ex_group_list);
-		// groupListView.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
+		groupListView.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
 
 		linearLayout = (LinearLayout) View.inflate(this, R.layout.av_temptext, null);
 		linearLayout.setVisibility(View.INVISIBLE);
@@ -171,15 +171,12 @@ System.out.println("22222");
 
 				int tmpEnd = groupCnt + 15;
 				for (; groupCnt < tmpEnd; groupCnt++) {
-
 					groupObj = (Group) groupList.get(groupCnt);
-
 					groupId = groupObj.getGroupId();
 
 					contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
 
 					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
-
 						childInfos.add(contactList);
 						groupObj.setContactList(contactList);
 					}
@@ -189,8 +186,6 @@ System.out.println("22222");
 
 				for (; groupCnt < groupListCnt; groupCnt++) {
 					groupObj = (Group) groupList.get(groupCnt);
-					groupInfos.add(groupObj);
-
 					groupId = groupObj.getGroupId();
 
 					contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
@@ -198,11 +193,13 @@ System.out.println("22222");
 					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
 						childInfos.add(contactList);
 					}
+					groupInfos.add(groupObj);
 				}
+				
 			}
 
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(1000);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -276,8 +273,9 @@ System.out.println("22222");
 			if (v == null) {
 				viewHolder = new ViewHolder();
 				v = inflater.inflate(R.layout.av_contact_row, null);
-				viewHolder.contact_nm = (TextView) v
-						.findViewById(R.id.receiverChkbox);
+				viewHolder.contact_nm  = (CheckBox) v.findViewById(R.id.receiverChkbox);
+				viewHolder.receiver_nm = (TextView) v.findViewById(R.id.receiverName);
+				viewHolder.receiver_no = (TextView) v.findViewById(R.id.receiverPhoneNo);
 				v.setTag(viewHolder);
 			} else {
 				viewHolder = (ViewHolder) v.getTag();
@@ -290,19 +288,22 @@ System.out.println("22222");
 			String receiverInfo = receiverName + ";" + receiverPhoneNo;
 
 			viewHolder.contact_nm.setText(receiverInfo);
-
+			viewHolder.receiver_nm.setText(receiverName);
+			viewHolder.receiver_no.setText(receiverPhoneNo);
+			
 			viewHolder.contact_nm.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					CheckBox chkbox = (CheckBox) v.findViewById(R.id.receiverChkbox);
-
 					// Toast.makeText(context, "선택값 : "+
 					// chkbox.getText().toString() + ", 선택 여부 : " +
 					// chkbox.isChecked(), Toast.LENGTH_SHORT).show();
 
-					updateData(chkbox.getText().toString(), chkbox.isChecked());
+//					System.out.println("RR : " + viewHolder.contact_nm.getText().toString());
+					
+					
+					updateData(viewHolder.contact_nm.getText().toString(), viewHolder.contact_nm.isChecked());
 				}
 			});
 
@@ -322,8 +323,7 @@ System.out.println("22222");
 
 				if (childListSize > 0) {
 					ArrayList<Contact> contactArrList = this.childList.get(groupPosition);
-					contactListSize = (StringUtil.isNotNull(contactArrList)) ? contactArrList
-							.size() : 0;
+					contactListSize = (StringUtil.isNotNull(contactArrList)) ? contactArrList.size() : 0;
 
 					// System.out.println("1-1 contactListSIze : " +
 					// contactListSize);
@@ -361,12 +361,14 @@ System.out.println("22222");
 				View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			View v = convertView;
-
+			
 			if (v == null) {
 				viewHolder = new ViewHolder();
 				v = inflater.inflate(R.layout.av_group_row, parent, false);
 				viewHolder.group_nm = (TextView) v.findViewById(R.id.groupName);
 				viewHolder.group_id = (TextView) v.findViewById(R.id.groupId);
+				viewHolder.group_child_cnt = (TextView) v.findViewById(R.id.groupChildCnt);
+				viewHolder.group_id.setVisibility(View.INVISIBLE);
 				v.setTag(viewHolder);
 			} else {
 				viewHolder = (ViewHolder) v.getTag();
@@ -374,14 +376,16 @@ System.out.println("22222");
 
 			// 그룹 열고 닫을 때
 			if (isExpanded) {
-
+				
 			} else {
 
 			}
 
-			viewHolder.group_nm
-					.setText(getGroup(groupPosition).getGroupTitle());
-			viewHolder.group_id.setText(getGroup(groupPosition).getGroupId());
+			Group groupObj = getGroup(groupPosition);
+			
+			viewHolder.group_nm.setText(groupObj.getGroupTitle());
+			viewHolder.group_id.setText(groupObj.getGroupId());
+			viewHolder.group_child_cnt.setText("(" + groupObj.getContactList().size() + ")");
 
 			return v;
 		}
@@ -401,7 +405,10 @@ System.out.println("22222");
 		class ViewHolder {
 			public TextView group_nm;
 			public TextView group_id;
-			public TextView contact_nm;
+			public TextView group_child_cnt;
+			public CheckBox contact_nm;
+			public TextView receiver_nm;
+			public TextView receiver_no;
 		}
 	}
 
