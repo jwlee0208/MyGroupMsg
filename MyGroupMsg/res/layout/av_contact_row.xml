@@ -17,7 +17,8 @@
             android:id="@+id/receiverChkbox"
             android:layout_width="50dip"
             android:layout_height="50dp"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:gravity="fill" />
 
         <TextView
             android:id="@+id/receiverName"
@@ -26,7 +27,8 @@
             android:layout_weight="0.50"
             android:text="name"
             android:textAlignment="center"
-            android:textSize="22sp" />
+            android:textSize="22sp" 
+            android:gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/receiverPhoneNo"
@@ -34,7 +36,8 @@
             android:layout_height="50dp"
             android:text="010-0000-0000"
             android:textAlignment="center"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:gravity="center_vertical" />
 	</LinearLayout>
 
 
