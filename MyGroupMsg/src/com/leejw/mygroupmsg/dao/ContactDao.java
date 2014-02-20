@@ -23,7 +23,7 @@ public class ContactDao {
 	 */
 	public ArrayList<Contact> getContactList(String searchKeyword, String groupId, Context context){
 		
-		System.out.println("groupId : " + groupId);
+//		System.out.println("groupId : " + groupId);
 		
 		ArrayList<Contact> contactList = new ArrayList<Contact>();
 		Contact contactInfo = null;
@@ -48,7 +48,7 @@ public class ContactDao {
         Cursor grpCursor = 
         		context.getContentResolver().query(uri, projections, selection, selectionArgs, sortOrder);
         
-        System.out.println("grpCursor.getCount() :  " + grpCursor.getCount());
+//        System.out.println("grpCursor.getCount() :  " + grpCursor.getCount());
         
 		if(grpCursor.moveToFirst()){
 			do{

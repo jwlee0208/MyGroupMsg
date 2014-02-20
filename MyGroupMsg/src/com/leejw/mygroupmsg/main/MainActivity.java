@@ -3,6 +3,7 @@ package com.leejw.mygroupmsg.main;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.leejw.mygroupmsg.BaseConstants;
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.contact.Contact;
 import com.leejw.mygroupmsg.contact.SelectedContactActivity;
@@ -42,29 +44,36 @@ public class MainActivity extends Activity{
 	protected void onActivityResult(int requestCode, int resultCode, Intent Data){
 		super.onActivityResult(requestCode, resultCode, Data);
 		
-		if(requestCode == 2){
-			Toast.makeText(getApplicationContext(), "수신자 선택 창 전환...", Toast.LENGTH_LONG).show();
+		if(requestCode == BaseConstants.PAGE_GO_TO_GROUP){
 			
-			if(resultCode == 2){
-				// ref.] http://blog.daum.net/haha25/5387851
+			if(resultCode == BaseConstants.PAGE_GO_TO_GROUP){
+				// ref.] 
+				// 1. http://blog.daum.net/haha25/5387851
+				// 2. http://www.androidside.com/bbs/board.php?bo_table=b49&wr_id=87165
 				this.contactList = (ArrayList<Contact>)Data.getSerializableExtra("contactList");
 				
-				if(contactList != null){
+				if(StringUtil.isNotNull(contactList)){
 					int contactListSize = contactList.size();
 					
 					if(contactListSize < 1){
-						Toast.makeText(getApplicationContext(), "선택된 수신자가 없습니다.", Toast.LENGTH_LONG).show();
+						Toast.makeText(getApplicationContext(), "No selected receivers.", Toast.LENGTH_LONG).show();
+					}else{
+						Toast.makeText(getApplicationContext(), "Total selected receiver's amount is " + contactListSize +" person(s).", Toast.LENGTH_LONG).show();
 					}
 				}
 			}
-		}else if(requestCode == 3){
+		}else if(requestCode == BaseConstants.PAGE_GO_TO_SELECTED_LIST){
+			// ref.]
+			// 1. http://www.androidside.com/bbs/board.php?bo_table=b49&wr_id=87165
 			this.contactList = (ArrayList<Contact>)Data.getSerializableExtra("contactList");
 			
-			if(contactList != null){
+			if(StringUtil.isNotNull(contactList)){
 				int contactListSize = contactList.size();
 				
 				if(contactListSize < 1){
-					Toast.makeText(getApplicationContext(), "선택된 수신자가 없습니다.", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "No selected receivers.", Toast.LENGTH_LONG).show();
+				}else{
+					Toast.makeText(getApplicationContext(), "Total selected receiver's amount is " + contactListSize +" person(s).", Toast.LENGTH_LONG).show();
 				}
 			}
 			
@@ -100,10 +109,35 @@ public class MainActivity extends Activity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				// Scroll 후 로딩 시 화면을 막고 로딩 스피너를 보여주도록.
+				// ref.] 
+				// 1. http://www.bemga.com/05-20-2013/android-show-loading-spinner.html
+				// 2. http://seungngil.tistory.com/32
+				final ProgressDialog progress = new ProgressDialog(MainActivity.this);
+				progress.setTitle("");
+				progress.setMessage("Loading...");
+				progress.show();
+
+				new Thread(new Runnable(){
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						try{
+							Intent intent = new Intent(getApplicationContext(), GroupActivity.class);
+							startActivityForResult(intent, BaseConstants.PAGE_GO_TO_GROUP);		
+							Thread.sleep(3000);
+						}catch(Exception e){
+							e.printStackTrace();
+						}
+						progress.dismiss();
+					}
+					
+				}).start();
+
+//				Intent intent = new Intent(getBaseContext(), GroupActivity.class);
+//				startActivityForResult(intent, BaseConstants.PAGE_GO_TO_GROUP);
 				
-//				Intent intent = new Intent(getBaseContext(), ContactActivity.class);
-				Intent intent = new Intent(getBaseContext(), GroupActivity.class);
-				startActivityForResult(intent, 2);
 			}
 		});
 	}
@@ -145,11 +179,11 @@ public class MainActivity extends Activity{
 				
 				if(StringUtil.isNotNull(msgStr)){
 					if(contactListSize > 0){
-						System.out.println("------------ [ start ] ------------");
+//						System.out.println("------------ [ start ] ------------");
 						for(Contact contactInfo : contactList){
 							sendSMS(contactInfo.getReceiverName(), contactInfo.getReceiverPhoneNo(), msgStr);
 						}
-						System.out.println("------------ [ finish ] -----------");
+//						System.out.println("------------ [ finish ] -----------");
 					}			
 				}				
 			}
@@ -198,12 +232,15 @@ public class MainActivity extends Activity{
 				// TODO Auto-generated method stub
 				// ref.] ArrayList<T> 형 데이터를 다른 액티비티로 전달
 				// http://www.androidside.com/bbs/board.php?bo_table=b49&wr_id=87165
-				Intent intent = new Intent(getApplicationContext(), SelectedContactActivity.class);		
-				intent.putExtra("contactList", contactList);
-//				Bundle b = new Bundle();
-//				b.putParcelableArrayList("contactList", (ArrayList<? extends Parcelable>)contactList);
-//				intent.putExtras(b);
-				startActivityForResult(intent, 3);
+				
+				if(StringUtil.isNotNull(contactList) && contactList.size() > 0){
+					Intent intent = new Intent(getBaseContext(), SelectedContactActivity.class);		
+					intent.putExtra("contactList", contactList);
+					startActivityForResult(intent, BaseConstants.PAGE_GO_TO_SELECTED_LIST);					
+				}else{
+					Toast.makeText(getApplicationContext(), "No selected contact infos.", Toast.LENGTH_LONG).show();
+					return;
+				}
 			}
 		});
 	}

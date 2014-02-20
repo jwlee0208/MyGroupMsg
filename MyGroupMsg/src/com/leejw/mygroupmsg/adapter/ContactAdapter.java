@@ -11,14 +11,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
-import com.leejw.mygroupmsg.adapter.GroupAdapter.GroupViewHolder;
 import com.leejw.mygroupmsg.contact.Contact;
-import com.leejw.mygroupmsg.group.Group;
 
 
-/**
- * contactAdapter
- * /
 public class ContactAdapter extends ArrayAdapter<Contact> {
 	public ContactAdapter(Context context, ArrayList<Contact> contacts) {
 		super(context, R.layout.av_contact_row, contacts);
@@ -76,7 +71,7 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 		String receiverNumber = contactInfo.getReceiverPhoneNo();
 		String receiverInfo = receiverName + ";" + receiverNumber;
 		
-		System.out.println("receiverInfo : " + receiverInfo);
+//		System.out.println("receiverInfo : " + receiverInfo);
 		
 		holder.chkBox.setText(receiverInfo);
 		holder.chkBox.setId(position);
@@ -116,7 +111,7 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 		return convertView;
 	}
 	
-	// ViewHolder��� ������
+	// ViewHolder
 	// Ref.] http://www.kmshack.kr/346
 	static class ContactViewHolder{
 		CheckBox chkBox;

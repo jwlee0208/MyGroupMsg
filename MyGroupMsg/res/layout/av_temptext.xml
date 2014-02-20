@@ -10,12 +10,11 @@
     	android:id="@+android:id/testtext1"
        	android:layout_width="30dip"
        	android:layout_height="30dip" />
-    <TextView 
-        
+    <TextView        
 		android:id="@+id/testtext"
 		android:layout_width="80dip"
 		android:layout_height="30dip"
 		android:paddingLeft="3dip"
-		android:text="로드 중 ..."
+		android:text="Loaging ..."
 	/>    
 </LinearLayout>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -22,6 +23,7 @@ import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.leejw.mygroupmsg.BaseConstants;
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.contact.Contact;
 import com.leejw.mygroupmsg.dao.ContactDao;
@@ -83,18 +85,16 @@ public class GroupActivity extends Activity {
 					if (StringUtil.isNotNull(contactList)) {
 						childInfos.add(contactList);
 						groupObj.setContactList(contactList);
+						
+						if(contactList.size() > 0){
+							groupInfos.add(groupObj);
+						}
 					}
-					groupInfos.add(groupObj);
+//					groupInfos.add(groupObj);
 
-				}
-				
-				
-//				for(int j = 0 ; j < groupInfos.size() ; j++){
-//					Group temp = (Group)groupInfos.get(j);
-//					System.out.println("groupInfo : " + temp.getGroupTitle() + ", " + temp.getGroupId());
-//				}
+				}				
 			} else {
-//System.out.println("22222");				
+				
 				for (groupCnt = 0; groupCnt < groupListCnt; groupCnt++) {
 					groupObj = (Group) groupList.get(groupCnt);
 
@@ -105,8 +105,12 @@ public class GroupActivity extends Activity {
 					if (StringUtil.isNotNull(contactList)) {
 						childInfos.add(contactList);
 						groupObj.setContactList(contactList);
+						
+						if(contactList.size() > 0){
+							groupInfos.add(groupObj);
+						}
 					}
-					groupInfos.add(groupObj);
+//					groupInfos.add(groupObj);
 				}
 			}
 
@@ -119,9 +123,10 @@ public class GroupActivity extends Activity {
 		groupListView = (ExpandableListView) findViewById(R.id.ex_group_list);
 		groupListView.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
 
-		linearLayout = (LinearLayout) View.inflate(this, R.layout.av_temptext, null);
-		linearLayout.setVisibility(View.INVISIBLE);
-		groupListView.addFooterView(linearLayout);
+//		linearLayout = (LinearLayout) View.inflate(this, R.layout.av_temptext, null);
+//		linearLayout.setVisibility(View.INVISIBLE);
+//		
+//		groupListView.addFooterView(linearLayout);
 		groupListView.setAdapter(adapter);
 
 		// scroll event
@@ -137,16 +142,15 @@ public class GroupActivity extends Activity {
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 				// TODO Auto-generated method stub
-				
-//				 System.out.println(firstVisibleItem + ", " + visibleItemCount + ", " + totalItemCount);
-//				
+								
 				if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
 
 					if (groupListCnt > groupCnt) {
-						linearLayout.setVisibility(View.VISIBLE);
+//						linearLayout.setVisibility(View.VISIBLE);
+						
 						new getMoreItems().execute(groupInfos);
 					} else {
-						linearLayout.setVisibility(View.INVISIBLE);
+//						linearLayout.setVisibility(View.INVISIBLE);
 					}
 				}
 			}
@@ -156,9 +160,38 @@ public class GroupActivity extends Activity {
 
 	private class getMoreItems extends
 			AsyncTask<ArrayList<Group>, Integer, Long> {
-
+		// ref.] http://mainia.tistory.com/709
+		ProgressDialog progress;
+		/**
+		 * Excuted Method before Excution doInBackground() Method.
+		 */
+		protected void onPreExecute() {
+			progress = new ProgressDialog(GroupActivity.this);
+			progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progress.setTitle("");
+			progress.setMessage("Loading...");
+			progress.show();
+			super.onPreExecute();
+		}
+		
+		/**
+		 * It excuted method where executed execute() method.
+		 */
 		@Override
 		protected Long doInBackground(ArrayList<Group>... arg0) {
+			
+			final int taskCnt = 0;
+//			publishProgress("max", Integer.toString(taskCnt));
+			
+			// Scroll 후 로딩 시 화면을 막고 로딩 스피너를 보여주도록.
+			// ref.] http://www.bemga.com/05-20-2013/android-show-loading-spinner.html
+//			ProgressDialog progress = new ProgressDialog(GroupActivity.this);
+//			progress.setTitle("");
+//			progress.setMessage("Loading...");
+//			progress.show();
+//			
+//			progress.dismiss();
+			
 			// TODO Auto-generated method stub
 			Long result = 0L;
 
@@ -179,8 +212,9 @@ public class GroupActivity extends Activity {
 					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
 						childInfos.add(contactList);
 						groupObj.setContactList(contactList);
+						groupInfos.add(groupObj);
 					}
-					groupInfos.add(groupObj);
+//					groupInfos.add(groupObj);
 				}
 			} else {
 
@@ -191,14 +225,16 @@ public class GroupActivity extends Activity {
 					contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
 
 					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
-						childInfos.add(contactList);
+						childInfos.add(contactList);		
+						groupObj.setContactList(contactList);
+						groupInfos.add(groupObj);
 					}
-					groupInfos.add(groupObj);
+//					groupInfos.add(groupObj);
 				}
 				
 			}
 
-			try {
+			try {				
 				Thread.sleep(1000);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -208,6 +244,7 @@ public class GroupActivity extends Activity {
 		}
 
 		protected void onPostExecute(Long result) {
+			progress.dismiss();
 			((BaseExpandableAdapter) adapter).notifyDataSetChanged();
 		}
 	}
@@ -302,9 +339,6 @@ public class GroupActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					// Toast.makeText(context, "��������� : "+
-					// chkbox.getText().toString() + ", ������ ������ : " +
-					// chkbox.isChecked(), Toast.LENGTH_SHORT).show();
 
 //					System.out.println("RR : " + viewHolder.contact_nm.getText().toString());
 					
@@ -517,7 +551,7 @@ public class GroupActivity extends Activity {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent(getBaseContext(), MainActivity.class);
 				intent.putExtra("contactList", selectedContactList);
-				setResult(2, intent);
+				setResult(BaseConstants.PAGE_GO_TO_GROUP, intent);
 				finish();
 			}
 		});
