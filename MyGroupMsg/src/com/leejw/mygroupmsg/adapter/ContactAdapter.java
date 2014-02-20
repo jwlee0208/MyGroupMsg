@@ -16,7 +16,9 @@ import com.leejw.mygroupmsg.contact.Contact;
 import com.leejw.mygroupmsg.group.Group;
 
 
-
+/**
+ * contactAdapter
+ * /
 public class ContactAdapter extends ArrayAdapter<Contact> {
 	public ContactAdapter(Context context, ArrayList<Contact> contacts) {
 		super(context, R.layout.av_contact_row, contacts);
