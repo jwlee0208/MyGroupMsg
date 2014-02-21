@@ -40,17 +40,17 @@ public class ContactDao {
         String selection = ""; 
         selection += CommonDataKinds.GroupMembership.GROUP_ROW_ID + " =  ? AND ";
         selection += ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE + "'" ;
-        selection += (StringUtil.isNotNull(searchKeyword)) ? " AND " + Contacts.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%'" : "";
-        String[] selectionArgs = { groupId };	//{String.valueOf(groupId)};
+//        selection += (StringUtil.isNotNull(searchKeyword)) ? " AND " + Contacts.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%'" : "";
+        String[] selectionArgs = { groupId };	
         String sortOrder = null;
 //        		Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
 
         Cursor grpCursor = 
         		context.getContentResolver().query(uri, projections, selection, selectionArgs, sortOrder);
         
-//        System.out.println("grpCursor.getCount() :  " + grpCursor.getCount());
-        
-		if(grpCursor.moveToFirst()){
+        long startGrpTime = System.currentTimeMillis();
+		
+        if(grpCursor.moveToFirst()){
 			do{
 
 				int nameColumnIndex = grpCursor.getColumnIndex(Phone.DISPLAY_NAME);
@@ -58,8 +58,6 @@ public class ContactDao {
 				String name = grpCursor.getString(nameColumnIndex);
 				
 				long contactId = grpCursor.getLong(grpCursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
-				
-//				System.out.println("groupName : " + name);
 				
 				Cursor numberCursor = context.getContentResolver().query(Phone.CONTENT_URI, new String[]{Phone.NUMBER}, Phone.CONTACT_ID + " = " + contactId, null, null);
 			
@@ -91,14 +89,20 @@ public class ContactDao {
 		                    int duplCnt = 0;
 		                    // ������ ������
 		                    if(contactList.size() > 0){
-			                    for(Contact tempContact : contactList){
-			                    	if(tempContact.getReceiverName().equals(name) && tempContact.getReceiverPhoneNo().equals(phoneNumber))
-			                    		duplCnt++;
-			                    }	                    	
+		                    	if(contactList.contains(contactInfo)){
+		                    		duplCnt++;
+		                    	}
+//			                    for(Contact tempContact : contactList){
+//			                    	if(tempContact.getReceiverName().equals(name) && tempContact.getReceiverPhoneNo().equals(phoneNumber))
+//			                    		duplCnt++;
+//			                    }	                    	
 		                    }
 		                    
-		                    if(duplCnt < 1)
-		                    	contactList.add(contactInfo);											        	
+		                    if(duplCnt > 1){
+		                    	// pass
+		                    }else{
+		                    	contactList.add(contactInfo);
+		                    }				        	
 				        }
 							                    
 //                        System.out.println("groupId : " + groupId + ", receiverPhoneNo : " + phoneNumber + ", name : " + name);
@@ -108,6 +112,10 @@ public class ContactDao {
 				}
 			}while(grpCursor.moveToNext());
 			grpCursor.close();
+			
+			long endGrpTime = System.currentTimeMillis();
+			
+			System.out.println("row Time : " + (endGrpTime-startGrpTime)/1000 +"초");
 		}	
 		
         return contactList;

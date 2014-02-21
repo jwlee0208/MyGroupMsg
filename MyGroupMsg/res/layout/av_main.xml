@@ -13,17 +13,17 @@
             <Button
                 android:id="@+id/button1"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="48dp"
                 android:layout_weight="0.87"
-                android:background="@drawable/btn_click"
+                android:background="#efefef"
                 android:text="Initiate" />
 
             <Button
                 android:id="@+id/button2"
                 android:layout_width="wrap_content"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:layout_weight="0.50"
-                android:background="@drawable/btn_click"
+                android:background="#efefef"
                 android:text="Select Receiver" />
         </LinearLayout>
 
@@ -61,7 +61,7 @@
                 android:layout_width="177dp"
                 android:layout_height="48dp"
                 android:layout_weight="0.98"
-                android:background="@drawable/btn_click"
+                android:background="#efefef"
                 android:text="Send" />
 
             <Button
@@ -69,7 +69,7 @@
                 android:layout_width="140dp"
                 android:layout_height="48dp"
                 android:layout_weight="22.50"
-                android:background="@drawable/btn_click"
+                android:background="#efefef"
                 android:text="Modify Receiver List" />
         </LinearLayout>
 

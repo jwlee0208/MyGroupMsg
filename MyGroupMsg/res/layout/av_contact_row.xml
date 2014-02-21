@@ -10,15 +10,16 @@
 
 	<LinearLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="50dp"
+	    android:layout_height="wrap_content"
 	    android:orientation="horizontal" >
 
         <CheckBox
             android:id="@+id/receiverChkbox"
             android:layout_width="50dip"
-            android:layout_height="50dp"
-            android:textColor="#ffffff"
-            android:gravity="fill" />
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:gravity="fill"
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/receiverName"
@@ -34,10 +35,12 @@
             android:id="@+id/receiverPhoneNo"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical"
             android:text="010-0000-0000"
             android:textAlignment="center"
-            android:textSize="20sp"
-            android:gravity="center_vertical" />
+            android:textSize="20sp" />
+
 	</LinearLayout>
 
 

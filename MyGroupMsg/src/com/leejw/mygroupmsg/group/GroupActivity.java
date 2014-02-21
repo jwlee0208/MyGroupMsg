@@ -1,6 +1,7 @@
 package com.leejw.mygroupmsg.group;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -75,47 +76,43 @@ public class GroupActivity extends Activity {
 			childInfos = new ArrayList<ArrayList<Contact>>();
 
 			if (groupListCnt > 15) {
-				for (groupCnt = 0; groupCnt < 15; groupCnt++) {
-
-					groupObj = (Group) groupList.get(groupCnt);
-					groupId = groupObj.getGroupId();
-
-					contactList = new ContactDao().getContactList(null, groupId, this);
-
-					if (StringUtil.isNotNull(contactList)) {
-						childInfos.add(contactList);
-						groupObj.setContactList(contactList);
-						
-						if(contactList.size() > 0){
-							groupInfos.add(groupObj);
-						}
-					}
-//					groupInfos.add(groupObj);
-
-				}				
+				this.forLoopGroupInfos(0, 15, groupList);
+//				for (groupCnt = 0; groupCnt < 15; groupCnt++) {
+//
+//					groupObj = (Group) groupList.get(groupCnt);
+//					groupId = groupObj.getGroupId();
+//
+//					contactList = new ContactDao().getContactList(null, groupId, this);
+//
+//					if (StringUtil.isNotNull(contactList)) {
+//						childInfos.add(contactList);
+//						groupObj.setContactList(contactList);
+//						
+//						if(contactList.size() > 0){
+//							groupInfos.add(groupObj);
+//						}
+//					}
+//				}				
 			} else {
+				this.forLoopGroupInfos(0, groupListCnt, groupList);
 				
-				for (groupCnt = 0; groupCnt < groupListCnt; groupCnt++) {
-					groupObj = (Group) groupList.get(groupCnt);
-
-					groupId = groupObj.getGroupId();
-
-					contactList = new ContactDao().getContactList(null, groupId, this);
-
-					if (StringUtil.isNotNull(contactList)) {
-						childInfos.add(contactList);
-						groupObj.setContactList(contactList);
-						
-						if(contactList.size() > 0){
-							groupInfos.add(groupObj);
-						}
-					}
-//					groupInfos.add(groupObj);
-				}
+//				for (groupCnt = 0; groupCnt < groupListCnt; groupCnt++) {
+//					groupObj = (Group) groupList.get(groupCnt);
+//
+//					groupId = groupObj.getGroupId();
+//
+//					contactList = new ContactDao().getContactList(null, groupId, this);
+//
+//					if (StringUtil.isNotNull(contactList)) {
+//						childInfos.add(contactList);
+//						groupObj.setContactList(contactList);
+//						
+//						if(contactList.size() > 0){
+//							groupInfos.add(groupObj);
+//						}
+//					}
+//				}
 			}
-
-
-			// }
 		}
 
 		adapter = new BaseExpandableAdapter(this, groupInfos, childInfos);
@@ -157,7 +154,72 @@ public class GroupActivity extends Activity {
 		});		
 
 	}
+	/**
+	 * forLoop
+	 * @param grpCnt
+	 * @param grpListCnt
+	 * @param grpList
+	 */
+	public void forLoopGroupInfos(int grpCnt, int grpListCnt, ArrayList<Group> grpList){
+		Group groupObj;
+		String groupId;
+		
+		for (groupCnt = grpCnt; groupCnt < grpListCnt; groupCnt++) {
+			int duplChk = 0;
+			
+			groupObj = (Group) groupList.get(groupCnt);
+			groupId = groupObj.getGroupId();
 
+			if(StringUtil.isNotNull(groupInfos)){
+				
+				if(groupInfos.contains(groupObj))
+					duplChk++;
+				
+//				int groupInfosSize = groupInfos.size();
+//				
+//				if(groupInfosSize > 0 ){
+//					for(int ii = 0 ; ii < groupInfosSize ; ii++){
+//						Group compareGroupObj = (Group)groupInfos.get(ii);
+//						if(compareGroupObj.getGroupId() == groupId 
+//						&& compareGroupObj.getGroupTitle() == groupObj.getGroupTitle()){
+//							duplChk++;
+//						}
+//					}					
+//				}
+
+				if(duplChk > 0){
+					// pass
+				}else{
+					contactList = new ContactDao().getContactList(null, groupId, this);
+
+					if (StringUtil.isNotNull(contactList)) {
+						childInfos.add(contactList);
+						groupObj.setContactList(contactList);
+						
+						if(contactList.size() > 0){
+							groupInfos.add(groupObj);
+						}
+					}					
+				}
+			}
+			
+//			HashSet<Group> removedDuplGroup = new HashSet<Group>(groupInfos);
+//			groupInfos = new ArrayList<Group>(removedDuplGroup);
+			
+//			contactList = new ContactDao().getContactList(null, groupId, this);
+//
+//			if (StringUtil.isNotNull(contactList)) {
+//				childInfos.add(contactList);
+//				groupObj.setContactList(contactList);
+//				
+//				if(contactList.size() > 0){
+//					groupInfos.add(groupObj);
+//				}
+//			}
+		}				
+
+	}
+	
 	private class getMoreItems extends
 			AsyncTask<ArrayList<Group>, Integer, Long> {
 		// ref.] http://mainia.tistory.com/709
@@ -202,38 +264,93 @@ public class GroupActivity extends Activity {
 
 			if (groupListCnt >= groupCnt + 15) {
 
-				int tmpEnd = groupCnt + 15;
+				int tmpEnd = groupCnt + 15;				
 				for (; groupCnt < tmpEnd; groupCnt++) {
+					int duplChk = 0 ;
 					groupObj = (Group) groupList.get(groupCnt);
 					groupId = groupObj.getGroupId();
 
-					contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
+					if(groupInfos.contains(groupObj))
+						duplChk++;
+					
+						
+//					int groupInfosSize = groupInfos.size();
+//					
+//					if(groupInfosSize > 0 ){
+//						for(int ii = 0 ; ii < groupInfosSize ; ii++){
+//							Group compareGroupObj = (Group)groupInfos.get(ii);
+//							if(compareGroupObj.getGroupId() == groupId 
+//							&& compareGroupObj.getGroupTitle() == groupObj.getGroupTitle()){
+//								duplChk++;
+//							}
+//						}					
+//					}
 
-					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
-						childInfos.add(contactList);
-						groupObj.setContactList(contactList);
-						groupInfos.add(groupObj);
+					if(duplChk > 0){
+						// pass
+					}else{
+						contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
+
+						if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
+							childInfos.add(contactList);
+							groupObj.setContactList(contactList);
+							groupInfos.add(groupObj);
+						}
 					}
-//					groupInfos.add(groupObj);
+//					contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
+//
+//					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
+//						childInfos.add(contactList);
+//						groupObj.setContactList(contactList);
+//						groupInfos.add(groupObj);
+//					}
 				}
 			} else {
 
 				for (; groupCnt < groupListCnt; groupCnt++) {
+					int duplChk = 0;
 					groupObj = (Group) groupList.get(groupCnt);
 					groupId = groupObj.getGroupId();
 
-					contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
+					if(groupInfos.contains(groupObj))
+						duplChk++;
+//					int groupInfosSize = groupInfos.size();
+//					
+//					if(groupInfosSize > 0 ){
+//						for(int ii = 0 ; ii < groupInfosSize ; ii++){
+//							Group compareGroupObj = (Group)groupInfos.get(ii);
+//							if(compareGroupObj.getGroupId() == groupId 
+//							&& compareGroupObj.getGroupTitle() == groupObj.getGroupTitle()){
+//								duplChk++;
+//							}
+//						}					
+//					}
 
-					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
-						childInfos.add(contactList);		
-						groupObj.setContactList(contactList);
-						groupInfos.add(groupObj);
+					if(duplChk > 0){
+						// pass
+					}else{
+						contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
+
+						if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
+							childInfos.add(contactList);
+							groupObj.setContactList(contactList);
+							groupInfos.add(groupObj);
+						}
 					}
-//					groupInfos.add(groupObj);
+//					contactList = new ContactDao().getContactList(null, groupId, getBaseContext());
+//
+//					if (StringUtil.isNotNull(contactList) && contactList.size() > 0) {
+//						childInfos.add(contactList);		
+//						groupObj.setContactList(contactList);
+//						groupInfos.add(groupObj);
+//					}
 				}
-				
 			}
 
+//			HashSet<Group> removedDuplGroup = new HashSet<Group>(groupInfos);
+//			groupInfos = new ArrayList<Group>(removedDuplGroup);
+			
+			
 			try {				
 				Thread.sleep(1000);
 			} catch (Exception e) {
@@ -409,6 +526,7 @@ public class GroupActivity extends Activity {
 			if (v == null) {
 				viewHolder = new ViewHolder();
 				v = inflater.inflate(R.layout.av_group_row, parent, false);
+				viewHolder.group_select = (TextView) v.findViewById(R.id.groupSelect);
 				viewHolder.group_nm = (TextView) v.findViewById(R.id.groupName);
 				viewHolder.group_id = (TextView) v.findViewById(R.id.groupId);
 				viewHolder.group_child_cnt = (TextView) v.findViewById(R.id.groupChildCnt);
@@ -420,9 +538,9 @@ public class GroupActivity extends Activity {
 
 			// ������ ������ ������ ���
 			if (isExpanded) {
-				
+				viewHolder.group_select.setText("∧");
 			} else {
-
+				viewHolder.group_select.setText("∨");
 			}
 
 			Group groupObj = getGroup(groupPosition);
@@ -447,6 +565,7 @@ public class GroupActivity extends Activity {
 		}
 
 		class ViewHolder {
+			public TextView group_select;
 			public TextView group_nm;
 			public TextView group_id;
 			public TextView group_child_cnt;

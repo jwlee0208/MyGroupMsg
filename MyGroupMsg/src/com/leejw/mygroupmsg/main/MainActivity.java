@@ -25,19 +25,32 @@ import com.leejw.utils.StringUtil;
 public class MainActivity extends Activity{
 	
 	ArrayList<Contact> contactList;
-	EditText textView;
+	EditText editView;
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.av_main);
 		
-		textView = (EditText)findViewById(R.id.editText1);
+		editView = (EditText)findViewById(R.id.editText1);
 				
 		setHeader();
 		
 		setFooter();
 
-		
+		editView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				EditText editText = (EditText)v.findViewById(R.id.editText1);
+				
+				if(StringUtil.isNotNull(editText.getText().toString())){
+					if(editText.getText().toString().equals("Please, Write your message.")){
+						editText.setText("");
+					}
+				}
+			}
+		});
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -153,9 +166,9 @@ public class MainActivity extends Activity{
 			public void onClick(View v){
 				Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_LONG).show();
 				
-				System.out.println("textView.getText().toString() : " + textView.getText().toString());
+				System.out.println("textView.getText().toString() : " + editView.getText().toString());
 				
-				String msgStr = textView.getText().toString();
+				String msgStr = editView.getText().toString();
 				if(msgStr.isEmpty()){
 					Toast.makeText(getApplicationContext(), "No inserted message.", Toast.LENGTH_LONG).show();
 					return;
