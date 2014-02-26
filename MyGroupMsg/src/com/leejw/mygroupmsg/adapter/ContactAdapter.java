@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.contact.Contact;
+import com.leejw.mygroupmsg.dao.PhoneDao;
 
 
 public class ContactAdapter extends ArrayAdapter<Contact> {

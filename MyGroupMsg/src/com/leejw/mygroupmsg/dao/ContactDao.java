@@ -7,12 +7,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
+import android.provider.ContactsContract.CommonDataKinds.GroupMembership;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 
 import com.leejw.mygroupmsg.contact.Contact;
-import com.leejw.utils.StringUtil;
 
 public class ContactDao {
 	/**
@@ -22,8 +22,6 @@ public class ContactDao {
 	 * @return
 	 */
 	public ArrayList<Contact> getContactList(String searchKeyword, String groupId, Context context){
-		
-//		System.out.println("groupId : " + groupId);
 		
 		ArrayList<Contact> contactList = new ArrayList<Contact>();
 		Contact contactInfo = null;
@@ -35,11 +33,17 @@ public class ContactDao {
 		String[] projections = new String[] {
 				Contacts.DISPLAY_NAME
 			  , android.provider.ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID
+			  , Phone.NUMBER
 		};
 		
         String selection = ""; 
-        selection += CommonDataKinds.GroupMembership.GROUP_ROW_ID + " =  ? AND ";
-        selection += ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE + "'" ;
+        
+        selection += Data.DATA1 + " = ? "; 
+//        		CommonDataKinds.GroupMembership.GROUP_ROW_ID + " =  ? ";
+        selection += " AND ";
+        selection += CommonDataKinds.GroupMembership.HAS_PHONE_NUMBER + " = 1 ";
+        selection += " AND ";
+        selection += Data.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE + "'";
 //        selection += (StringUtil.isNotNull(searchKeyword)) ? " AND " + Contacts.DISPLAY_NAME + " LIKE '%" + searchKeyword + "%'" : "";
         String[] selectionArgs = { groupId };	
         String sortOrder = null;
@@ -53,63 +57,23 @@ public class ContactDao {
         if(grpCursor.moveToFirst()){
 			do{
 
-				int nameColumnIndex = grpCursor.getColumnIndex(Phone.DISPLAY_NAME);
+//				int nameColumnIndex = grpCursor.getColumnIndex(Phone.DISPLAY_NAME);
 				
-				String name = grpCursor.getString(nameColumnIndex);
+				String name = grpCursor.getString(0);
+				long contactId = grpCursor.getLong(1);
 				
-				long contactId = grpCursor.getLong(grpCursor.getColumnIndex(android.provider.ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+//				long contactId = grpCursor.getLong(grpCursor.getColumnIndex(GroupMembership.CONTACT_ID));
+//				String phoneNo = grpCursor.getString(grpCursor.getColumnIndex(Phone.NUMBER));
 				
-				Cursor numberCursor = context.getContentResolver().query(Phone.CONTENT_URI, new String[]{Phone.NUMBER}, Phone.CONTACT_ID + " = " + contactId, null, null);
-			
-				if(numberCursor.moveToFirst()){
-					int numberColumnIndex = numberCursor.getColumnIndex(Phone.NUMBER);
-					do{
-						String phoneNumber = numberCursor.getString(numberColumnIndex);
-						
-						phoneNumber = phoneNumber.replaceAll("-", "");
-						
-				        String headPhoneNo = phoneNumber.substring(0, 3);
-				        
-				        if (phoneNumber.length() == 10) {
-				                phoneNumber = headPhoneNo + "-"
-				                                + phoneNumber.substring(3, 6) + "-"
-				                                + phoneNumber.substring(6);
-				        } else if (phoneNumber.length() > 8) {
-				                phoneNumber = headPhoneNo + "-"
-				                                + phoneNumber.substring(3, 7) + "-"
-				                                + phoneNumber.substring(7);
-				        }
-						
-				        if(headPhoneNo.equals("010") || headPhoneNo.equals("011") || headPhoneNo.indexOf("82") > 0){
-							contactInfo = new Contact();
-		                    contactInfo.setReceiverPhoneNo(phoneNumber);
-		                    contactInfo.setReceiverName(name);
-		                    contactInfo.setGroupId(groupId);
-		                    
-		                    int duplCnt = 0;
-		                    // ������ ������
-		                    if(contactList.size() > 0){
-		                    	if(contactList.contains(contactInfo)){
-		                    		duplCnt++;
-		                    	}
-//			                    for(Contact tempContact : contactList){
-//			                    	if(tempContact.getReceiverName().equals(name) && tempContact.getReceiverPhoneNo().equals(phoneNumber))
-//			                    		duplCnt++;
-//			                    }	                    	
-		                    }
-		                    
-		                    if(duplCnt > 1){
-		                    	// pass
-		                    }else{
-		                    	contactList.add(contactInfo);
-		                    }				        	
-				        }
-							                    
-//                        System.out.println("groupId : " + groupId + ", receiverPhoneNo : " + phoneNumber + ", name : " + name);
-                        
-					}while(numberCursor.moveToNext());
-					numberCursor.close();	
-				}
+//				System.out.println("groupId : " + groupId + ", contactId : " + contactId + ", name : " + name);
+				
+				contactInfo = new Contact();
+
+                contactInfo.setReceiverName(name);
+                contactInfo.setGroupId(groupId);
+				contactInfo.setContactId(contactId);
+                contactList.add(contactInfo);
+
 			}while(grpCursor.moveToNext());
 			grpCursor.close();
 			

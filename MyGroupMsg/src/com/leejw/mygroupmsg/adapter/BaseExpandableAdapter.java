@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.contact.Contact;
+import com.leejw.mygroupmsg.dao.PhoneDao;
 import com.leejw.mygroupmsg.group.Group;
 
 public class BaseExpandableAdapter extends BaseExpandableListAdapter{
@@ -21,6 +22,7 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 	private LayoutInflater inflater;
 	
 	private ViewHolder viewHolder;
+	private Context context;
 //	private ArrayList<Contact> contactList;
 	
 	public BaseExpandableAdapter(Context context, ArrayList<Group> groupList,
@@ -28,6 +30,7 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 		super();
 		this.groupList = groupList;
 		this.childList = childList;
+		this.context = context;
 		this.inflater = LayoutInflater.from(context);
 	}
 	
@@ -61,6 +64,9 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter{
 		}
 		
 		Contact contactInfo = getChild(groupPosition, childPosition);
+		
+
+
 		String receiverName = contactInfo.getReceiverName();
 		String receiverPhoneNo = contactInfo.getReceiverPhoneNo();
 		

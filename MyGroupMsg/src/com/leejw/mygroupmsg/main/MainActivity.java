@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Telephony.MmsSms;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -222,10 +223,24 @@ public class MainActivity extends Activity{
 					String myPhoneNo = telMng.getLine1Number();
 					
 					SmsManager smsManager = SmsManager.getDefault();
+					ArrayList<String> divideMsg = smsManager.divideMessage(convertedMsg);
+					
+					int divideMsgSize = divideMsg.size();
+					
 					System.out.println(receiverName + ", " + receiverPhoneNo + ", " + convertedMsg + ", " + myPhoneNo);
-					smsManager.sendTextMessage(receiverPhoneNo, myPhoneNo, convertedMsg, null, null);
+					
+					if(divideMsgSize > 0){
+						if(divideMsgSize > 1){
+							smsManager.sendMultipartTextMessage(receiverPhoneNo, myPhoneNo, divideMsg, null, null);
+						}else{
+							smsManager.sendTextMessage(receiverPhoneNo, myPhoneNo, convertedMsg, null, null);
+						}
+					}
+					
+//					smsManager.sendTextMessage(receiverPhoneNo, myPhoneNo, convertedMsg, null, null);
 					
 					String sentMsg = "[" + receiverPhoneNo + "]" + receiverName + "";
+					
 					try{
 						System.out.println(sentMsg + " normally sended message.");
 					}catch(Exception ex){

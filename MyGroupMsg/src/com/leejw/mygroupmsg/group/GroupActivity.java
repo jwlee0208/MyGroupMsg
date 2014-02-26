@@ -29,6 +29,7 @@ import com.leejw.mygroupmsg.R;
 import com.leejw.mygroupmsg.contact.Contact;
 import com.leejw.mygroupmsg.dao.ContactDao;
 import com.leejw.mygroupmsg.dao.GroupDao;
+import com.leejw.mygroupmsg.dao.PhoneDao;
 import com.leejw.mygroupmsg.main.MainActivity;
 import com.leejw.utils.StringUtil;
 
@@ -419,12 +420,11 @@ public class GroupActivity extends Activity {
 		}
 
 		@Override
-		public View getChildView(int groupPosition, int childPosition,
-				boolean isLastChild, View convertView, ViewGroup parent) {
+		public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			View v = convertView;
 
-			if (v == null) {
+//			if (v == null) {
 				viewHolder = new ViewHolder();
 				v = inflater.inflate(R.layout.av_contact_row, null);
 				viewHolder.contact_nm  = (CheckBox) v.findViewById(R.id.receiverChkbox);
@@ -433,20 +433,40 @@ public class GroupActivity extends Activity {
 				
 //				viewHolder.contact_nm.setChecked(false);
 				
-				v.setTag(viewHolder);
-			} else {
-				viewHolder = (ViewHolder) v.getTag();
-//				viewHolder.contact_nm.setChecked(viewHolder.contact_nm.isChecked());
-			}
+//				v.setTag(viewHolder);
+//			} else {
+//				viewHolder = (ViewHolder) v.getTag();
+////				viewHolder.contact_nm.setChecked(viewHolder.contact_nm.isChecked());
+//			}
 
 //			viewHolder.contact_nm.setChecked(false);
 			
 			Contact contactInfo = getChild(groupPosition, childPosition);
+			
+			long contactId = contactInfo.getContactId();
+			
+			System.out.println("contactId : "+ contactId);
+			
+			// 전화번호 설정 위한 phoneDao 호출
+			PhoneDao phoneDao = new PhoneDao();
+			Contact additionalInfo = phoneDao.getPhoneInfo(contactId, context);
+			
+			if(additionalInfo != null){
+				contactInfo.setPhoneNoType(additionalInfo.getPhoneNoType());
+				contactInfo.setReceiverPhoneNo(additionalInfo.getReceiverPhoneNo());
+				contactInfo.setPhoneNoType(additionalInfo.getPhoneNoType());
+				System.out.println("additionalInfo : " + additionalInfo.getReceiverPhoneNo() + ", " + additionalInfo.getPhoneNoType());
+			}
+			
 			String receiverName = contactInfo.getReceiverName();
 			String receiverPhoneNo = contactInfo.getReceiverPhoneNo();
-
 			String receiverInfo = receiverName + ";" + receiverPhoneNo;
-
+			int phoneType = contactInfo.getPhoneNoType();
+			// 전화번호가 mobile이 아닌 경우는 체크박스 비활성화
+			if(!isMobileNo(phoneType)){
+				viewHolder.contact_nm.setEnabled(false);
+			}
+			
 			viewHolder.contact_nm.setText(receiverInfo);
 			viewHolder.receiver_nm.setText(receiverName);
 			viewHolder.receiver_no.setText(receiverPhoneNo);
@@ -467,10 +487,17 @@ public class GroupActivity extends Activity {
 					
 				}
 			});
-
+			
 			return v;
 		}
 
+		private boolean isMobileNo(int type){
+			boolean isMobile = false;
+			if(type == 2)
+				isMobile = true;
+			return isMobile;
+		}
+		
 		@Override
 		public int getChildrenCount(int groupPosition) {
 			// TODO Auto-generated method stub

@@ -8,6 +8,8 @@ public class Contact implements Serializable{
 	private String receiverName;
 	private String receiverPhoneNo;
 	private String groupId;
+	private long contactId;		// unique key for searching someons's detail contact info.
+	private int phoneNoType;		// cell phone, home phone, fax no, etc,.
 	
 	public String getReceiverId() {
 		return receiverId;
@@ -33,5 +35,18 @@ public class Contact implements Serializable{
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
+	public long getContactId() {
+		return contactId;
+	}
+	public void setContactId(long contactId) {
+		this.contactId = contactId;
+	}
+	public int getPhoneNoType() {
+		return phoneNoType;
+	}
+	public void setPhoneNoType(int phoneNoType) {
+		this.phoneNoType = phoneNoType;
+	}
+	
 	
 }
